@@ -1,393 +1,283 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Dumbbell, 
-  Target, 
-  MessageCircle, 
-  Clock, 
-  CheckCircle2, 
-  ChevronRight, 
-  Instagram, 
-  Mail,
-  Zap,
-  ShieldCheck,
-  Activity,
-  ArrowDownCircle,
-  TrendingUp,
-  Brain,
-  Award,
-  ZapOff,
-  Flame
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nícolas Garibaldi | Engenharia do Movimento</title>
+    <!-- Tailwind CSS para Estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React e Babel para rodar o componente no navegador -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #05080f;
+        }
 
-const App = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+            display: flex;
+            width: max-content;
+        }
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+        .italic { font-style: italic; }
 
-  const handleWhatsApp = () => {
-    // Número atualizado: 55 (Brasil) + 51 (DDD) + 998322391
-    const phoneNumber = "5551998322391";
-    const message = encodeURIComponent("Olá Nícolas! Tenho interesse na Assessoria com foco em LPO e performance. Como funciona?");
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
-
-  return (
-    <div className="min-h-screen bg-[#070b14] text-slate-300 font-sans selection:bg-green-400 selection:text-black scroll-smooth">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-[#070b14]/90 backdrop-blur-xl py-4 shadow-2xl border-b border-white/5' : 'bg-transparent py-8'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
-              <Activity className="text-[#070b14]" size={24} strokeWidth={2.5} />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white leading-none">NÍCOLAS</span>
-              <span className="text-xs font-bold tracking-[0.3em] text-green-400">GARIBALDI</span>
-            </div>
-          </div>
-          <button 
-            onClick={handleWhatsApp}
-            className="hidden md:flex items-center gap-2 bg-white hover:bg-green-400 text-[#070b14] px-6 py-2.5 rounded-full font-black text-sm transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-white/10"
-          >
-            CONSULTORIA AGORA
-          </button>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-green-400/10 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[100px]" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
-        </div>
-
-        <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-          <div className="text-left">
-            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full mb-6">
-              <Flame size={14} className="text-green-400" />
-              <span className="text-[10px] font-black tracking-widest uppercase text-green-400">Especialista em LPO e Reabilitação</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tight">
-              FORÇA BRUTA. <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-yellow-300">TÉCNICA PURA.</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-slate-400 max-w-xl mb-10 leading-relaxed">
-              Domine o <strong className="text-white">Levantamento de Peso Olímpico (LPO)</strong> e transforme sua potência física com um método que une biomecânica avançada e prevenção de lesões.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button 
-                onClick={handleWhatsApp}
-                className="group flex items-center justify-center gap-3 bg-green-500 text-[#070b14] px-10 py-5 rounded-2xl font-black text-lg transition-all hover:bg-green-400 shadow-2xl shadow-green-500/30 transform hover:-translate-y-1"
-              >
-                COMEÇAR TREINAMENTO
-                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-            
-            <div className="mt-10 flex items-center gap-6">
-               <div className="flex flex-col">
-                  <span className="text-2xl font-black text-white leading-none">CREF</span>
-                  <span className="text-xs font-bold text-green-400 uppercase tracking-widest">035143</span>
-               </div>
-               <div className="h-8 w-px bg-white/10"></div>
-               <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                  Atleta de LPO & Boxe
-               </div>
-            </div>
-          </div>
-
-          <div className="hidden md:block relative">
-            <div className="relative z-10 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
-               <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=800" alt="LPO Training" className="w-full grayscale hover:grayscale-0 transition-all duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-transparent to-transparent" />
-            </div>
-            <div className="absolute -bottom-6 -right-6 bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-2xl z-20 animate-bounce-slow">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-500 rounded-lg"><Activity size={20} className="text-[#070b14]" /></div>
-                <div>
-                  <div className="text-xs font-bold text-slate-400">Potência</div>
-                  <div className="text-lg font-black text-white">Snatch & Clean</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Expertise Grid - LPO Focus */}
-      <section className="py-20 border-y border-white/5 bg-[#0a101d]">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="flex flex-col items-center text-center group">
-              <div className="w-16 h-16 mb-4 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                <Dumbbell className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-white font-black uppercase tracking-tighter">LPO</h4>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">Snatch, Clean & Jerk</p>
-            </div>
-            <div className="flex flex-col items-center text-center group">
-              <div className="w-16 h-16 mb-4 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                <Award className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-white font-black uppercase tracking-tighter">Kettlebell</h4>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">Nível I e II</p>
-            </div>
-            <div className="flex flex-col items-center text-center group">
-              <div className="w-16 h-16 mb-4 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                <Brain className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-white font-black uppercase tracking-tighter">Biomecânica</h4>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">Reabilitação Ativa</p>
-            </div>
-            <div className="flex flex-col items-center text-center group">
-              <div className="w-16 h-16 mb-4 rounded-2xl bg-white/5 flex items-center justify-center group-hover:bg-green-500/10 transition-colors">
-                <ShieldCheck className="text-green-400" size={32} />
-              </div>
-              <h4 className="text-white font-black uppercase tracking-tighter">Segurança</h4>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">Prevenção de Lesões</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* LPO Detail Section */}
-      <section className="py-24 relative">
-        <div className="container mx-auto px-6">
-           <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight uppercase">
-                  O LPO COMO <br/><span className="text-green-400">FERRAMENTA DE ELITE</span>
-                </h2>
-                <div className="space-y-6">
-                   <p className="text-slate-400 leading-relaxed">
-                     O Levantamento de Peso Olímpico não é apenas sobre levantar carga. É a combinação perfeita entre <strong className="text-white">explosão, mobilidade e consciência corporal</strong>.
-                   </p>
-                   <div className="grid sm:grid-cols-2 gap-4">
-                      {[
-                        "Aumento drástico de potência",
-                        "Melhora na mobilidade articular",
-                        "Refinamento da coordenação",
-                        "Desenvolvimento de força central",
-                        "Aplicação para outros desportos",
-                        "Correção técnica milimétrica"
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <TrendingUp size={16} className="text-green-400" />
-                          <span className="text-sm font-bold text-slate-300 uppercase tracking-tight">{item}</span>
-                        </div>
-                      ))}
-                   </div>
-                </div>
-              </div>
-              <div className="bg-[#111c30] p-1 rounded-3xl border border-white/5 relative">
-                 <div className="bg-[#070b14] p-8 rounded-3xl">
-                    <div className="flex items-center gap-4 mb-6">
-                       <div className="p-3 bg-green-500/10 rounded-xl"><Brain className="text-green-400" size={24} /></div>
-                       <h4 className="text-xl font-bold text-white uppercase">Abordagem Técnica</h4>
-                    </div>
-                    <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                      Utilizo as metodologias de LPO integradas ao treinamento funcional para garantir que cada levantamento seja executado com a máxima eficiência mecânica, reduzindo o estresse articular ao zero.
-                    </p>
-                    <div className="flex items-center gap-2 text-yellow-500 font-black text-xs uppercase tracking-widest">
-                       <ShieldCheck size={16} /> Especialista em reabilitação
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="planos" className="py-24 relative bg-slate-950/50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tighter uppercase">INVESTIMENTO</h2>
-            <p className="text-slate-500 font-bold tracking-widest uppercase text-xs">Planos Mensais de Consultoria</p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 items-stretch">
-            {/* Avaliação */}
-            <div className="bg-[#0a111f] p-8 rounded-[2.5rem] border border-white/5 flex flex-col hover:border-white/10 transition-all">
-              <div className="mb-6">
-                <span className="text-green-400 font-black text-[10px] uppercase tracking-[0.2em]">Diagnóstico Inicial</span>
-                <h3 className="text-3xl font-black text-white mt-2">AVALIAÇÃO</h3>
-              </div>
-              <p className="text-slate-400 mb-8 text-sm leading-relaxed italic">Análise de movimento obrigatória para novos alunos de LPO.</p>
-              
-              <div className="space-y-4 mb-auto">
-                <div className="p-5 rounded-2xl bg-white/5 border border-white/5 flex justify-between items-center group">
-                  <div className="text-white font-bold text-sm uppercase">Movimento</div>
-                  <div className="text-xl font-black text-white">R$ 120</div>
-                </div>
-                <div className="p-5 rounded-2xl bg-green-500/10 border border-green-500/20 flex justify-between items-center">
-                  <div className="text-white font-bold text-sm uppercase">Completa (Antropo + Mov)</div>
-                  <div className="text-xl font-black text-green-400">R$ 150</div>
-                </div>
-              </div>
-              
-              <button onClick={handleWhatsApp} className="mt-8 w-full py-4 rounded-xl border border-white/20 font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
-                AGENDAR AGORA
-              </button>
-            </div>
-
-            {/* Assessoria Mensal */}
-            <div className="relative bg-gradient-to-b from-[#1a2d4d] to-[#0a111f] p-10 rounded-[2.5rem] border-2 border-green-500 shadow-[0_0_50px_rgba(34,197,94,0.1)] flex flex-col transform lg:-translate-y-8 z-10">
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-green-500 text-[#070b14] px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-xl">
-                MAIS PROCURADO
-              </div>
-              
-              <div className="mb-8 text-center">
-                <span className="text-green-400 font-black text-[10px] uppercase tracking-[0.2em]">Acompanhamento Completo</span>
-                <h3 className="text-4xl font-black text-white mt-2 leading-none">ASSESSORIA</h3>
-                <div className="mt-4 flex items-center justify-center gap-2">
-                  <span className="text-5xl font-black text-white">R$ 250</span>
-                  <span className="text-slate-400 font-bold">/mês</span>
-                </div>
-              </div>
-
-              <ul className="space-y-5 mb-10">
-                {[
-                  "Treinos A e B focados no seu objetivo",
-                  "Módulo exclusivo de técnica de LPO",
-                  "Troca de planejamento mensal",
-                  "1 Aula Online (1h) p/ correções",
-                  "Suporte via WhatsApp (Horários comb.)"
-                ].map((text, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm font-medium text-slate-200 uppercase tracking-tight">
-                    <CheckCircle2 size={18} className="text-green-400 shrink-0 mt-0.5" />
-                    {text}
-                  </li>
-                ))}
-              </ul>
-
-              <button 
-                onClick={handleWhatsApp}
-                className="w-full bg-green-500 hover:bg-green-400 text-[#070b14] py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 group"
-              >
-                QUERO O MEU TREINO
-                <MessageCircle size={22} className="group-hover:rotate-12 transition-transform" />
-              </button>
-            </div>
-
-            {/* Extras */}
-            <div className="bg-[#0a111f] p-8 rounded-[2.5rem] border border-white/5 flex flex-col hover:border-white/10 transition-all">
-              <div className="mb-6">
-                <span className="text-yellow-500 font-black text-[10px] uppercase tracking-[0.2em]">Especialidades</span>
-                <h3 className="text-3xl font-black text-white mt-2">EXTRAS</h3>
-              </div>
-              
-              <div className="space-y-4 mb-8">
-                <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex justify-between items-center group">
-                  <div className="flex items-center gap-4">
-                    <Activity className="text-yellow-500" size={20} />
-                    <div className="text-white font-bold text-xs uppercase tracking-widest">Corrida</div>
-                  </div>
-                  <div className="text-lg font-black text-yellow-500">+ R$ 100</div>
-                </div>
-
-                <div className="p-6 rounded-3xl bg-white/5 border border-white/5 flex justify-between items-center group">
-                  <div className="flex items-center gap-4">
-                    <Target className="text-green-400" size={20} />
-                    <div className="text-white font-bold text-xs uppercase tracking-widest">Presencial</div>
-                  </div>
-                  <div className="text-lg font-black text-green-400">+ R$ 100</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Profile Section */}
-      <section className="py-24 bg-[#070b14] relative overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row gap-20 items-center">
-            <div className="lg:w-1/2 relative">
-              <div className="relative aspect-square max-w-sm mx-auto bg-slate-800 rounded-[3rem] overflow-hidden border-8 border-white/5 rotate-2 shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" alt="Nicolas" className="w-full h-full object-cover grayscale" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-transparent to-transparent" />
-              </div>
-              <div className="absolute -bottom-10 -left-10 md:left-0 bg-green-500 text-black p-6 rounded-3xl z-10 shadow-2xl">
-                 <div className="text-3xl font-black leading-none">CREF</div>
-                 <div className="text-xl font-bold tracking-[0.2em]">035143</div>
-              </div>
-            </div>
-
-            <div className="lg:w-1/2">
-               <h2 className="text-4xl font-black text-white mb-8 leading-tight uppercase">
-                 QUEM É O <span className="text-green-400">TREINADOR?</span>
-               </h2>
-               <div className="space-y-4 text-slate-400 font-bold uppercase tracking-tight text-sm">
-                  <div className="flex gap-3"><ChevronRight className="text-green-400" size={16}/> Especialista em Funcional e Reabilitação</div>
-                  <div className="flex gap-3"><ChevronRight className="text-green-400" size={16}/> Atleta de Levantamento de Peso Olímpico</div>
-                  <div className="flex gap-3"><ChevronRight className="text-green-400" size={16}/> Professor Certificado de Kettlebell I e II</div>
-                  <div className="flex gap-3"><ChevronRight className="text-green-400" size={16}/> Professor de Boxe e Pilates Suspenso</div>
-               </div>
-               <p className="mt-8 text-slate-400 leading-relaxed italic">
-                 "Minha missão é levar o treinamento de alto rendimento para a sua realidade, garantindo que você levante cada vez mais carga com técnica perfeita e zero dor."
-               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="py-24 bg-gradient-to-r from-green-500 to-yellow-500 text-center">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl md:text-6xl font-black text-[#070b14] mb-8 leading-none uppercase">DOMINE O LPO. <br/>VENCE O PLATÔ.</h2>
-          <button 
-            onClick={handleWhatsApp}
-            className="bg-[#070b14] text-white px-12 py-5 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl flex items-center gap-4 mx-auto group"
-          >
-            QUERO MINHA VAGA AGORA
-            <ArrowDownCircle size={28} className="text-green-400 group-hover:translate-y-1 transition-transform" />
-          </button>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 bg-[#050810] border-t border-white/5">
-        <div className="container mx-auto px-6 text-center">
-          <div className="text-2xl font-black text-white mb-2">NÍCOLAS <span className="text-green-400">GARIBALDI</span></div>
-          <div className="flex justify-center gap-6 mt-6">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-green-400 transition-colors"><Instagram size={24} /></a>
-              <a href="mailto:nicolas@exemplo.com" className="text-slate-500 hover:text-green-400 transition-colors"><Mail size={24} /></a>
-          </div>
-          <div className="mt-8 text-slate-600 text-[10px] font-black uppercase tracking-[0.4em]">
-             &copy; 2024 Nícolas Garibaldi • Treinamento de Alta Performance
-          </div>
-        </div>
-      </footer>
-
-      {/* Floating WhatsApp Mobile */}
-      <button 
-        onClick={handleWhatsApp}
-        className="fixed bottom-6 right-6 z-50 md:hidden w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl animate-bounce-slow"
-      >
-        <MessageCircle size={32} className="text-[#070b14]" />
-      </button>
-      
-      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         .animate-bounce-slow {
-          animation: bounce-slow 4s ease-in-out infinite;
+            animation: bounce-slow 4s ease-in-out infinite;
         }
-      `}} />
-    </div>
-  );
-};
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-export default App;
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Ícones em SVG para garantir que funcionem em qualquer servidor
+        const Icon = ({ name, size = 24, className = "" }) => {
+            // Simplificação: usando Lucide via CDN no final do carregamento ou caminhos SVG
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
+
+        const FAQItem = ({ question, answer }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            return (
+                <div className="border-b border-white/5 last:border-0">
+                    <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="w-full py-6 flex justify-between items-center text-left hover:text-green-400 transition-colors"
+                    >
+                        <span className="text-lg font-bold tracking-tight uppercase">{question}</span>
+                        <span className="text-2xl">{isOpen ? '-' : '+'}</span>
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pb-6' : 'max-h-0'}`}>
+                        <p className="text-slate-400 leading-relaxed text-sm uppercase font-medium">{answer}</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const testimonials = [
+            { name: "Sandro", role: "Aluno de Personal Trainer", text: "Nícolas tem muito conhecimento, não só em sua área de atuação, a aula foi muito produtiva. Superou muito as expectativas." },
+            { name: "Gabiê", role: "Aluna de Assessoria", text: "Sempre muito atencioso e receptivo. Fez meus treinos de acordo com minha necessidade." },
+            { name: "Juliano", role: "Aluno de Treinamento", text: "Transformação total no meu estilo de vida. No ano passado fui buscar exames e hoje sou outra pessoa através do treino do Nícolas." },
+            { name: "João", role: "Aluno de Funcional", text: "Profissional sério e com muita experiência. Pessoa divertida e dinâmica com real interesse no sucesso dos alunos." },
+            { name: "Dieter", role: "Aluno de Treinamento", text: "Excelente professor! Focado na implementação de métodos adequados ao objetivo, com muito recurso e variações." },
+            { name: "Guilherme", role: "Aluno de Assessoria", text: "Ótimo profissional. Muito inteligente, atencioso e paciente. Recomendo demais!" }
+        ];
+
+        const App = () => {
+            const [isScrolled, setIsScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => setIsScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                // Inicializa os ícones após a renderização
+                if (window.lucide) window.lucide.createIcons();
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            // Re-inicializa ícones quando o FAQ abre/fecha ou estado muda
+            useEffect(() => {
+                if (window.lucide) window.lucide.createIcons();
+            });
+
+            const handleWhatsApp = () => {
+                const phoneNumber = "5551998322391";
+                const message = encodeURIComponent("Olá Nícolas! Quero elevar meu nível de treino. Como funciona sua Assessoria?");
+                window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+            };
+
+            return (
+                <div className="min-h-screen text-slate-300 selection:bg-green-400 selection:text-black scroll-smooth">
+                    {/* Navigation */}
+                    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-[#05080f]/90 backdrop-blur-xl py-4 shadow-2xl border-b border-white/5' : 'bg-transparent py-8'}`}>
+                        <div className="max-w-7xl mx-auto px-8 md:px-20 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="text-green-400"><Icon name="activity" size={28} /></div>
+                                <div className="flex flex-col">
+                                    <span className="text-xl font-black tracking-tighter text-white leading-none">GARIBALDI</span>
+                                    <span className="text-[8px] font-black tracking-[0.4em] text-green-400 uppercase">Engenharia do Movimento</span>
+                                </div>
+                            </div>
+                            <button onClick={handleWhatsApp} className="bg-green-500 hover:bg-white text-black px-6 py-2.5 rounded-full font-black text-xs transition-all shadow-lg shadow-green-500/20 uppercase flex items-center gap-2">
+                                Iniciar Programa <Icon name="chevron-right" size={14} />
+                            </button>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+                        <div className="absolute inset-0 -z-10">
+                            <div className="absolute top-[10%] left-[20%] w-[400px] h-[400px] bg-green-400/10 rounded-full blur-[120px]"></div>
+                            <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px]"></div>
+                        </div>
+                        <div className="max-w-7xl mx-auto px-8 md:px-20 text-center">
+                            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-sm">
+                                <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-white italic">Vagas Limitadas para este Mês</span>
+                            </div>
+                            <h1 className="text-6xl md:text-[110px] font-black text-white mb-6 leading-[0.85] tracking-tighter uppercase italic">
+                                DESIGN DE <br/>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-yellow-300 underline decoration-white/10 decoration-8 underline-offset-[-10px]">PERFORMANCE.</span>
+                            </h1>
+                            <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 leading-tight uppercase font-bold tracking-tight">
+                                Consultoria de treinamento de elite. Menos esforço aleatório, mais inteligência aplicada ao seu movimento.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                <button onClick={handleWhatsApp} className="w-full sm:w-auto bg-white text-black px-12 py-6 rounded-2xl font-black text-xl hover:bg-green-500 transition-all shadow-2xl flex items-center justify-center gap-3 group">
+                                    QUERO MINHA ASSESSORIA <Icon name="arrow-down-circle" size={24} />
+                                </button>
+                                <div className="flex items-center gap-4 px-6 py-2 border border-white/10 rounded-2xl backdrop-blur-sm">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">+100 Alunos Ativos</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Marquee */}
+                    <div className="py-10 bg-green-500 overflow-hidden border-y-4 border-black rotate-[-1deg] relative z-20">
+                        <div className="animate-marquee">
+                            {[1,2].map(i => (
+                                <div key={i} className="flex gap-10 items-center px-5">
+                                    <span className="text-black text-4xl font-black uppercase italic">Engenharia do Movimento</span>
+                                    <Icon name="plus" size={32} className="text-black" />
+                                    <span className="text-black text-4xl font-black uppercase italic">Reabilitação Ativa</span>
+                                    <Icon name="plus" size={32} className="text-black" />
+                                    <span className="text-black text-4xl font-black uppercase italic">LPO Avançado</span>
+                                    <Icon name="plus" size={32} className="text-black" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Bento Grid */}
+                    <section className="py-32 relative">
+                        <div className="max-w-7xl mx-auto px-8 md:px-20">
+                            <h2 className="text-4xl md:text-6xl font-black text-white leading-none uppercase italic mb-16">METODOLOGIA <br/><span className="text-green-400 underline decoration-white underline-offset-8">INTEGRADA.</span></h2>
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                <div className="md:col-span-8 bg-[#0a111f] rounded-[2.5rem] border border-white/5 p-10 flex flex-col justify-end relative overflow-hidden group min-h-[300px]">
+                                    <Icon name="shield-check" size={40} className="text-green-400 mb-4" />
+                                    <h3 className="text-3xl font-black text-white mb-4 uppercase">REABILITAÇÃO & PREVENÇÃO</h3>
+                                    <p className="text-slate-400 max-w-md uppercase text-xs font-bold leading-relaxed">Foco total em mobilidade articular e correção técnica para que a dor nunca seja um limite.</p>
+                                </div>
+                                <div className="md:col-span-4 bg-green-500 rounded-[2.5rem] p-10 flex flex-col justify-between min-h-[300px]">
+                                    <Icon name="trending-up" size={40} className="text-black" />
+                                    <h3 className="text-2xl font-black text-black uppercase italic leading-none">FUNCIONAL DE ELITE</h3>
+                                </div>
+                                <div className="md:col-span-4 bg-[#111827] rounded-[2.5rem] border border-white/5 p-10 min-h-[200px] flex flex-col justify-between">
+                                    <Icon name="award" size={32} className="text-green-400" />
+                                    <h3 className="text-xl font-bold text-white uppercase italic">KETTLEBELL NÍVEL I & II</h3>
+                                </div>
+                                <div className="md:col-span-8 bg-[#1a2d4d] rounded-[2.5rem] border border-white/5 p-10 min-h-[200px] flex items-center justify-between">
+                                    <h3 className="text-3xl font-black text-white uppercase italic">TÉCNICA LPO</h3>
+                                    <Icon name="dumbbell" size={60} className="text-white/10" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Depoimentos */}
+                    <section className="py-32 bg-[#0a111f]">
+                        <div className="max-w-7xl mx-auto px-8 md:px-20">
+                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase italic text-center mb-16 underline decoration-green-400">DEPOIMENTOS.</h2>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {testimonials.map((item, idx) => (
+                                    <div key={idx} className="bg-white/5 border border-white/5 p-8 rounded-[2.5rem]">
+                                        <Icon name="quote" className="text-green-500 mb-4" size={24} />
+                                        <p className="text-slate-300 text-sm font-medium leading-relaxed mb-6 uppercase italic">"{item.text}"</p>
+                                        <div className="text-white font-black text-xs uppercase">{item.name}</div>
+                                        <div className="text-green-500 font-bold text-[9px] uppercase tracking-widest">{item.role}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Investimento */}
+                    <section id="planos" className="py-32 bg-white text-black rounded-[4rem] shadow-2xl">
+                        <div className="max-w-7xl mx-auto px-8 md:px-20">
+                            <h2 className="text-5xl md:text-8xl font-black uppercase mb-20 italic">INVESTIMENTO <br/><span className="text-green-600">DE VALOR.</span></h2>
+                            <div className="grid lg:grid-cols-3 gap-8">
+                                <div className="p-10 rounded-[3rem] bg-slate-100 flex flex-col">
+                                    <h3 className="text-3xl font-black uppercase mb-4">Avaliação</h3>
+                                    <div className="text-4xl font-black mb-10">R$ 120</div>
+                                    <button onClick={handleWhatsApp} className="mt-auto w-full py-5 rounded-2xl border-2 border-black font-black uppercase text-xs">Marcar Diagnóstico</button>
+                                </div>
+                                <div className="p-10 rounded-[3rem] bg-black text-white flex flex-col relative transform lg:-translate-y-12 shadow-2xl">
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-black px-6 py-1 rounded-full text-[10px] font-black uppercase">Mais Procurado</div>
+                                    <h3 className="text-3xl font-black uppercase mb-4 italic">Assessoria</h3>
+                                    <div className="text-5xl font-black mb-10">R$ 250<span className="text-sm font-bold text-slate-400">/mês</span></div>
+                                    <ul className="space-y-4 mb-10 text-[10px] font-black uppercase">
+                                        <li>+ Treino Personalizado</li>
+                                        <li>+ Troca Mensal</li>
+                                        <li>+ 1 Aula Online Mensal</li>
+                                        <li>+ Suporte WhatsApp</li>
+                                    </ul>
+                                    <button onClick={handleWhatsApp} className="w-full bg-green-500 text-black py-6 rounded-3xl font-black text-xl uppercase italic">Iniciar meu Treino</button>
+                                </div>
+                                <div className="p-10 rounded-[3rem] bg-slate-100 flex flex-col">
+                                    <h3 className="text-3xl font-black uppercase mb-4">Extras</h3>
+                                    <div className="space-y-4 mb-10">
+                                        <div className="flex justify-between font-black uppercase text-xs"><span>Corrida</span><span>+R$ 100</span></div>
+                                        <div className="flex justify-between font-black uppercase text-xs"><span>Presencial</span><span>+R$ 100</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* FAQ */}
+                    <section className="py-32 bg-[#05080f]">
+                        <div className="max-w-4xl mx-auto px-8">
+                            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic text-center mb-16">Dúvidas Frequentes</h2>
+                            <div className="bg-white/5 p-8 md:p-12 rounded-[3rem] border border-white/5">
+                                <FAQItem question="Como recebo meu planejamento?" answer="Entrega digital após a avaliação com vídeos demonstrativos." />
+                                <FAQItem question="Posso treinar em qualquer lugar?" answer="Sim, adaptamos o treino ao seu ambiente e equipamentos." />
+                                <FAQItem question="Tenho lesão, posso participar?" answer="Sim. Como especialista em reabilitação, o foco é segurança total." />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="py-20 border-t border-white/5 text-center">
+                        <div className="max-w-7xl mx-auto px-8 md:px-20">
+                            <div className="text-4xl font-black text-white italic mb-10 uppercase tracking-tighter">NÍCOLAS<span className="text-green-400">.</span></div>
+                            <div className="flex justify-center gap-10 mb-12 font-black uppercase text-[9px] text-slate-500 italic">
+                                <a href="#" className="hover:text-green-400 transition-colors">Instagram</a>
+                                <a href="#" onClick={handleWhatsApp} className="hover:text-green-400 transition-colors">WhatsApp</a>
+                            </div>
+                            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em]">Nícolas Garibaldi • CREF 035143 • Porto Alegre/RS</p>
+                        </div>
+                    </footer>
+
+                    {/* Mobile Button */}
+                    <div className="fixed bottom-8 left-0 w-full px-8 z-50 md:hidden">
+                        <button onClick={handleWhatsApp} className="w-full bg-green-500 text-black py-5 rounded-2xl font-black text-lg shadow-2xl flex items-center justify-center gap-3 uppercase italic">
+                             Agendar Treino
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
