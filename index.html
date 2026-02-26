@@ -1,133 +1,577 @@
-<!-- ARQUIVO CORRIGIDO - SUBSTITUA O SEU INTEIRO POR ESTE -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<title>Nícolas Garibaldi | Engenharia do Movimento</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tags para evitar que o GitHub Pages guarde cache da versão antiga -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Nícolas Garibaldi | Engenharia do Movimento</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React e Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #05080f;
+            color: #cbd5e1;
+            overflow-x: hidden;
+        }
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+            display: flex;
+            width: max-content;
+        }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-body{font-family:'Inter',sans-serif;background:#05080f;color:#cbd5e1;overflow-x:hidden}
-</style>
+        .container-custom {
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .container-custom {
+                padding-left: 4rem;
+                padding-right: 4rem;
+            }
+        }
+
+        .switch-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 999px;
+            display: inline-flex;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .switch-btn {
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+
+        .switch-btn.active {
+            background: #22c55e;
+            color: #000;
+        }
+
+        .lang-btn {
+            font-size: 10px;
+            font-weight: 900;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            opacity: 1;
+            color: #22c55e;
+        }
+    </style>
 </head>
 <body>
-<div id="root"></div>
+    <div id="root"></div>
 
-<script type="text/babel">
-const { useState } = React
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-const translations = {
-pt:{
-modeDigital:"Assessoria",
-modePersonal:"Personal 1:1",
-plansTitle1:"PLANOS DE",
-plansTitle2:"EVOLUÇÃO.",
-card1:"Avaliação Digital",
-card2:"Assessoria",
-price2:"R$ 250/mês",
-cta:"Quero Iniciar",
-footer:"Porto Alegre/RS • Engenharia do Movimento"
-},
-en:{
-modeDigital:"Online Coaching",
-plansTitle1:"EVOLUTION",
-plansTitle2:"PLANS.",
-card1:"Digital Assessment",
-card2:"Online Coaching",
-price2:"$ 50/mo",
-cta:"Get Started",
-footer:"Porto Alegre, BR • Movement Engineering"
-}
-}
+        // Ícones blindados e embutidos para resolver o BUG da TELA PRETA (Sem dependência do Lucide externo)
+        const Icon = ({ name, size = 24, className = "" }) => {
+            const icons = {
+                'activity': <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>,
+                'chevron-right': <polyline points="9 18 15 12 9 6"></polyline>,
+                'arrow-right': <><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></>,
+                'plus': <><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></>,
+                'check': <polyline points="20 6 9 17 4 12"></polyline>,
+                'search': <><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></>,
+                'user-check': <><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></>,
+                'smartphone': <><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></>,
+                'message-circle': <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>,
+                'file-text': <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></>,
+                'car': <><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></>,
+                'map-pin': <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></>
+            };
+            return icons[name] ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    {icons[name]}
+                </svg>
+            ) : null;
+        };
 
-function App(){
-const [lang,setLang]=useState("pt")
-const [isDigital,setIsDigital]=useState(true)
+        const translations = {
+            pt: {
+                navAssessoria: "Assessoria",
+                navPersonal: "Personal 1:1",
+                navBtn: "Abrir Protocolo",
+                heroTagDig: "O Método do Presencial no seu celular",
+                heroTagPers: "Atendimento exclusivo e individual",
+                heroT1: "ESTRATÉGIA",
+                heroT2: "VALIDADA.",
+                heroT1Pers: "TREINO 1:1",
+                heroT2Pers: "FEITO À MÃO.",
+                heroSubDig: "Tenha o acompanhamento de um treinador que atende mais de 100 alunos reais todos os dias. Ciência do movimento aplicada à sua rotina.",
+                heroSubPers: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
+                heroCTA: "QUERO MINHA ASSESSORIA",
+                heroCTAPers: "QUERO MEU PERSONAL",
+                marquee: ["Performance Atlética", "Reabilitação Funcional", "Treinamento Funcional"],
+                badgeTitle: "ALUNOS",
+                badgeSub: "Monitorados Diariamente",
+                aboutT1: "ENGENHARIA DO",
+                aboutT2: "MOVIMENTO.",
+                aboutSub: "Minha trajetória une o rigor técnico da Educação Física com o raciocínio lógico da Tecnologia.",
+                aboutText: "Com 6 anos de experiência prática, gerencio o treinamento de mais de 100 alunos no CT em que atuo. Utilizo meu background tecnológico para monitorar cada detalhe da sua evolução técnica. Cada treino é pensado para você evoluir de verdade.",
+                checks: ["Monitoramento por Dados", "Reabilitação Funcional", "Performance Atlética", "Treinamento Funcional"],
+                planT1: "PLANOS DE",
+                planT2: "EVOLUÇÃO.",
+                cardAssessment: "Avaliação Digital",
+                priceAssessment1: "R$ 120",
+                priceAssessment2: "R$ 150",
+                itemAssessment1: "Movimento",
+                itemAssessment2: "Movimentos + Antropométrica",
+                descAssessment: "Diagnóstico biomecânico essencial para iniciarmos sua estratégia online.",
+                btnAssessment: "Agendar Diagnóstico",
+                cardMain: "Assessoria",
+                priceMain: "R$ 250",
+                priceMainSub: "/mês",
+                vagas: "Vagas Limitadas",
+                featuresMain: ["Treino A/B Personalizado", "Troca Mensal de Planejamento", "1 Aula Online Mensal (1h)", "Suporte WhatsApp Direto"],
+                btnMain: "Quero Iniciar",
+                cardExtra: "Adicionais",
+                extra1: "Corrida",
+                extra1Price: "+R$ 100",
+                extra2: "Presencial",
+                extra2Price: "+R$ 100",
+                extraDesc: "Para refinamento técnico e presencial em Porto Alegre.",
+                handmadeTitle: "TREINO 100% FEITO À MÃO 👊",
+                handmadeSub: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
+                inclusoT: "📋 O que está incluso",
+                inclusoItems: [
+                    "Avaliação completa inicial",
+                    "Sessões presenciais individuais",
+                    "Treino atualizado no app Tecnofit",
+                    "Suporte WhatsApp",
+                    "Contrato + termo de responsabilidade"
+                ],
+                inclusoItem3Desc: "Vídeos, Fotos de postura e Gráficos de evolução",
+                avaliaCardT: "🎯 Avaliação Inicial",
+                avaliaItem1: "Movimento",
+                avaliaItem2: "Antropométrica (7 dobras)",
+                avaliaCardP1: "R$ 80",
+                avaliaCardP2: "R$ 60",
+                avaliaOffer: "FECHE QUALQUER PACOTE NO DIA DA AVALIAÇÃO E PAGUE APENAS R$ 100",
+                pricesT: "💰 Valores",
+                pricesNames: ["Sessão Avulsa", "Pacote 4x", "Pacote 8x", "Pacote 12x"],
+                pricesVals: ["R$ 120", "R$ 480", "R$ 880", "R$ 1.200"],
+                pricesSub: ["", "R$ 120 / aula", "R$ 110 / aula", "R$ 100 / aula"],
+                pricesBtn: ["Agendar", "Selecionar", "Selecionar", "Selecionar"],
+                recommended: "Frequência Ideal",
+                location: "📍 Atendo na tua casa ou na academia que tu frequenta.",
+                travelT: "🚗 Deslocamento",
+                travelD: "Gratuito até 5km. Acréscimo de R$ 10 a R$ 50/sessão para distâncias maiores.",
+                faqT: "PERGUNTAS FREQUENTES.",
+                faqs: [
+                    { q: "Como funciona o suporte?", a: "O suporte é direto via WhatsApp para tirar dúvidas rápidas sobre os exercícios do app ou ajustes de carga." },
+                    { q: "O que é o Tecnofit?", a: "É o app profissional que eu utilizo para registrar todos os teus treinos, com vídeos, métricas e gráficos." }
+                ],
+                footer: "Porto Alegre/RS • Engenharia do Movimento",
+                mobileCTA: "INICIAR AGORA"
+            },
+            en: {
+                navAssessoria: "Online Coaching",
+                navPersonal: "", 
+                navBtn: "Get Started",
+                heroTagDig: "The quality of in-person training on your phone",
+                heroTagPers: "",
+                heroT1: "VALIDATED",
+                heroT2: "STRATEGY.",
+                heroT1Pers: "",
+                heroT2Pers: "",
+                heroSubDig: "Managed by a professional coach for 100+ daily students. Movement science applied to your routine.",
+                heroSubPers: "",
+                heroCTA: "START MY COACHING",
+                heroCTAPers: "",
+                marquee: ["Athletic Performance", "Functional Rehab", "Strength & Data"],
+                badgeTitle: "STUDENTS",
+                badgeSub: "Monitored Daily",
+                aboutT1: "MOVEMENT",
+                aboutT2: "ENGINEERING.",
+                aboutSub: "Merging technical physical education with logical data reasoning.",
+                aboutText: "With 6 years of experience, I manage over 100 students daily. I use my tech background to monitor every technical detail, ensuring your growth is based on facts, not guesses.",
+                checks: ["Data-Driven Monitoring", "Functional Rehab", "Performance Training", "Strength Protocols"],
+                planT1: "EVOLUTION",
+                planT2: "PLANS.",
+                cardAssessment: "Digital Assessment",
+                priceAssessment1: "$ 30",
+                priceAssessment2: "$ 40",
+                itemAssessment1: "Movement",
+                itemAssessment2: "Movement + Anthropometry",
+                descAssessment: "Essential biomechanical diagnosis to start your online strategy with safety.",
+                btnAssessment: "Book Assessment",
+                cardMain: "Online Coaching",
+                priceMain: "$ 50",
+                priceMainSub: "/mo",
+                vagas: "Limited Spots",
+                featuresMain: ["Personalized Workout Plan", "Monthly Plan Updates", "1 Monthly Online Class (1h)", "Direct WhatsApp Support"],
+                btnMain: "Get Started",
+                cardExtra: "Add-ons",
+                extra1: "Running Plans",
+                extra1Price: "+$ 20",
+                extra2: "Consultation",
+                extra2Price: "+$ 30",
+                extraDesc: "Technical refinement sessions (Porto Alegre only).",
+                handmadeTitle: "",
+                handmadeSub: "",
+                inclusoT: "",
+                inclusoItems: [],
+                inclusoItem3Desc: "",
+                avaliaCardT: "",
+                avaliaItem1: "",
+                avaliaItem2: "",
+                avaliaCardP1: "",
+                avaliaCardP2: "",
+                avaliaOffer: "",
+                pricesT: "",
+                pricesNames: [],
+                pricesVals: [],
+                pricesSub: [],
+                pricesBtn: [],
+                recommended: "",
+                location: "",
+                travelT: "",
+                travelD: "",
+                faqT: "FREQUENT QUESTIONS.",
+                faqs: [
+                    { q: "How does support work?", a: "Direct WhatsApp contact for quick form checks, load adjustments, and routine support." },
+                    { q: "What is Tecnofit?", a: "It's the premium app I use to track your workouts, videos, and progress metrics." }
+                ],
+                footer: "Porto Alegre, BR • Movement Engineering",
+                mobileCTA: "START NOW"
+            }
+        };
 
-const t=translations[lang]
+        const FAQItem = ({ question, answer }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            return (
+                <div className="border-b border-white/5 last:border-0 py-6">
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center text-left hover:text-green-400 transition-colors gap-4">
+                        <span className="text-base md:text-lg font-bold text-white uppercase tracking-tight">{question}</span>
+                        <span className="text-2xl shrink-0">{isOpen ? '-' : '+'}</span>
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pt-4' : 'max-h-0'}`}>
+                        <p className="text-slate-400 text-sm font-medium leading-relaxed">{answer}</p>
+                    </div>
+                </div>
+            );
+        };
 
-function switchLang(l){
-setLang(l)
-if(l==="en"){
-setIsDigital(true) // força modo digital no inglês
-}
-}
+        const App = () => {
+            const [lang, setLang] = useState('pt');
+            const [isDigital, setIsDigital] = useState(true);
+            const [isScrolled, setIsScrolled] = useState(false);
 
-function openWhats(){
-const msg=encodeURIComponent("Olá Nícolas! Quero iniciar agora.")
-window.open(`https://wa.me/5551998422391?text=${msg}`,"_blank")
-}
+            const t = translations[lang];
 
-return(
-<div className="min-h-screen bg-[#05080f] text-white">
+            useEffect(() => {
+                const handleScroll = () => setIsScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
 
-{/* TOPO */}
-<div className="flex justify-between items-center p-6">
-<div className="font-black text-xl">GARIBALDI</div>
-<div className="flex gap-4 items-center">
-{lang==="pt" && (
-<div className="flex bg-white/10 rounded-full p-1 text-xs">
-<button onClick={()=>setIsDigital(true)} className={`px-4 py-1 rounded-full ${isDigital?"bg-green-500 text-black":""}`}>{translations.pt.modeDigital}</button>
-<button onClick={()=>setIsDigital(false)} className={`px-4 py-1 rounded-full ${!isDigital?"bg-green-500 text-black":""}`}>{translations.pt.modePersonal}</button>
-</div>
-)}
+            // Força o modo Digital ao mudar para Inglês e impede Personal
+            const switchLang = (l) => {
+                setLang(l);
+                if (l === 'en') {
+                    setIsDigital(true);
+                }
+            };
 
-<div className="flex gap-2 text-xs">
-<button onClick={()=>switchLang("pt")} className={lang==="pt"?"text-green-400":""}>PT</button>
-<button onClick={()=>switchLang("en")} className={lang==="en"?"text-green-400":""}>EN</button>
-</div>
-</div>
-</div>
+            const handleWhatsApp = (p = "") => {
+                const num = "5551998422391";
+                const ctx = isDigital ? t.navAssessoria : t.navPersonal;
+                const msg = encodeURIComponent(`Olá Nícolas! Quero saber mais sobre ${ctx}${p ? ` (${p})` : ""}.`);
+                window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
+            };
 
-{/* HERO */}
-<div className="text-center py-24">
-<h1 className="text-5xl font-black mb-6 uppercase">
-{isDigital ? t.modeDigital : translations.pt.modePersonal}
-</h1>
-<button onClick={openWhats} className="bg-green-500 text-black px-8 py-4 rounded-xl font-black">
-{t.cta}
-</button>
-</div>
+            return (
+                <div className="min-h-screen selection:bg-green-400 selection:text-black scroll-smooth bg-[#05080f]">
+                    {/* Header */}
+                    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-[#05080f]/95 backdrop-blur-xl py-4 border-b border-white/5 shadow-2xl' : 'bg-transparent py-6 md:py-8'}`}>
+                        <div className="container-custom flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Icon name="activity" className="text-green-400" />
+                                <div className="flex flex-col">
+                                    <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">GARIBALDI</span>
+                                    <span className="text-[7px] font-black tracking-[0.3em] text-green-400 uppercase leading-none mt-1">
+                                        {isDigital ? t.navAssessoria : t.navPersonal}
+                                    </span>
+                                </div>
+                            </div>
 
-{/* PLANOS (SEM ALTERAR MODO AQUI) */}
-<div className="bg-white text-black rounded-t-3xl p-12">
-<h2 className="text-4xl font-black uppercase mb-10">
-{t.plansTitle1} <br/><span className="text-green-600">{t.plansTitle2}</span>
-</h2>
+                            <div className="hidden lg:flex items-center gap-6">
+                                {/* Aqui a trava do idioma: Personal SOMENTE aparece se lang for 'pt' */}
+                                {lang === 'pt' && (
+                                    <div className="switch-container">
+                                        <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
+                                        <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
+                                    </div>
+                                )}
+                                <div className="flex gap-2 bg-white/5 px-3 py-2 rounded-full border border-white/10">
+                                    <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
+                                    <span className="opacity-10 text-white">|</span>
+                                    <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
+                                </div>
+                            </div>
 
-<div className="grid md:grid-cols-2 gap-8">
-<div className="p-8 bg-slate-100 rounded-2xl">
-<h3 className="font-black text-xl mb-4">{t.card1}</h3>
-<button onClick={openWhats} className="border-2 border-black px-6 py-3 rounded-xl font-black w-full">{t.cta}</button>
-</div>
+                            <button onClick={() => handleWhatsApp()} className="bg-green-500 hover:bg-white text-black px-6 py-2.5 rounded-full font-black text-xs transition-all uppercase flex items-center gap-2 shadow-lg shadow-green-500/20">
+                                {t.navBtn} <Icon name="chevron-right" size={12} />
+                            </button>
+                        </div>
+                    </nav>
 
-<div className="p-8 bg-black text-white rounded-2xl">
-<h3 className="font-black text-xl mb-4">{t.card2}</h3>
-<p className="text-3xl font-black text-green-400 mb-6">{t.price2}</p>
-<button onClick={openWhats} className="bg-green-500 text-black px-6 py-3 rounded-xl font-black w-full">{t.cta}</button>
-</div>
-</div>
-</div>
+                    {/* Hero */}
+                    <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
+                        <div className="container-custom grid md:grid-cols-12 items-center gap-12 text-center md:text-left">
+                            <div className="md:col-span-12 lg:col-span-10">
+                                <div className="lg:hidden mb-8 flex flex-col gap-4 items-center">
+                                    {/* Trava no Mobile: Personal some no Inglês */}
+                                    {lang === 'pt' && (
+                                        <div className="switch-container">
+                                            <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
+                                            <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
+                                        </div>
+                                    )}
+                                    <div className="flex gap-4">
+                                        <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
+                                        <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
+                                    </div>
+                                </div>
 
-{/* FOOTER */}
-<div className="text-center py-12 text-xs text-slate-500">
-{t.footer} • © 2026
-</div>
+                                <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
+                                    <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
+                                        {isDigital ? t.heroTagDig : t.heroTagPers}
+                                    </span>
+                                </div>
 
-</div>
-)
-}
+                                <h1 className="text-4xl sm:text-6xl lg:text-[90px] font-black text-white mb-6 leading-[1] tracking-tighter uppercase italic">
+                                    {isDigital ? t.heroT1 : t.heroT1Pers}<br/>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-yellow-300">
+                                        {isDigital ? t.heroT2 : t.heroT2Pers}
+                                    </span>
+                                </h1>
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>)
-</script>
+                                <p className="text-base md:text-xl text-slate-400 max-w-2xl mb-10 font-bold">
+                                    {isDigital ? t.heroSubDig : t.heroSubPers}
+                                </p>
+
+                                <button onClick={() => handleWhatsApp()} className="w-full sm:w-auto bg-white text-black px-10 py-5 rounded-2xl font-black text-lg hover:bg-green-500 transition-all shadow-2xl flex items-center justify-center gap-3">
+                                    {isDigital ? t.heroCTA : t.heroCTAPers} <Icon name="arrow-right" size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Marquee */}
+                    <div className="py-8 bg-green-500 overflow-hidden border-y-4 border-black rotate-[-1deg] relative z-20">
+                        <div className="animate-marquee">
+                            {[1,2,3].map(i => (
+                                <div key={i} className="flex gap-10 items-center px-5">
+                                    {t.marquee.map((m, idx) => (
+                                        <React.Fragment key={idx}>
+                                            <span className="text-black text-2xl md:text-3xl font-black uppercase italic">{m}</span>
+                                            <Icon name="plus" size={24} className="text-black" />
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Sobre */}
+                    <section className="py-24 bg-[#070b14]">
+                        <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
+                            <div className="md:col-span-5 relative">
+                                <div className="aspect-[4/5] bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                                    <img src="https://i.imgur.com/E2auHBT.jpg" className="w-full h-full object-cover" alt="Nicolas" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#070b14] via-transparent opacity-60"></div>
+                                </div>
+                                {/* Badge de alunos traduzida */}
+                                <div className="absolute -bottom-6 -right-6 bg-green-500 text-black p-6 rounded-3xl hidden md:block shadow-2xl">
+                                    <div className="text-3xl font-black leading-none italic uppercase">+100 {t.badgeTitle}</div>
+                                    <div className="text-[10px] font-bold tracking-widest uppercase">{t.badgeSub}</div>
+                                </div>
+                            </div>
+                            <div className="md:col-span-7">
+                                <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-8 underline decoration-green-400 decoration-4">{t.aboutT1} <br/>{t.aboutT2}</h2>
+                                <p className="text-lg text-slate-300 font-medium mb-6">{t.aboutSub}</p>
+                                <p className="text-sm text-slate-400 leading-relaxed mb-8">{t.aboutText}</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase text-[10px] font-black tracking-widest">
+                                    {t.checks.map((c, i) => (
+                                        <div key={i} className="flex items-center gap-2 bg-white/5 p-3 rounded-xl border border-white/5">
+                                            <Icon name="check" size={14} className="text-green-500" /> {c}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Planos */}
+                    <section className="py-24 bg-white text-black rounded-t-[3rem] md:rounded-t-[5rem] shadow-2xl relative z-30">
+                        <div className="container-custom">
+                            <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
+                                <h2 className="text-4xl md:text-8xl font-black uppercase italic leading-none text-center md:text-left">{t.planT1} <br/><span className="text-green-600">{t.planT2}</span></h2>
+                                {/* Título de Planos - Trava no Inglês */}
+                                {lang === 'pt' && (
+                                    <div className="switch-container">
+                                        <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
+                                        <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {isDigital ? (
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {/* Digital Cards */}
+                                    <div className="p-10 rounded-[2.5rem] bg-slate-100 border border-black/5 flex flex-col group hover:border-black transition-all">
+                                        <h3 className="text-2xl font-black uppercase mb-4">{t.cardAssessment}</h3>
+                                        <div className="space-y-4 mb-10 border-b border-black/10 pb-6 font-black uppercase text-[10px]">
+                                            <div className="flex justify-between items-end"><span>{t.itemAssessment1}</span><span className="text-2xl text-green-600 leading-none">{t.priceAssessment1}</span></div>
+                                            <div className="flex justify-between items-end"><span>{t.itemAssessment2}</span><span className="text-2xl text-green-600 leading-none">{t.priceAssessment2}</span></div>
+                                        </div>
+                                        <p className="text-[10px] font-black uppercase text-slate-500 mb-6 italic">{t.descAssessment}</p>
+                                        <button onClick={() => handleWhatsApp(t.cardAssessment)} className="mt-auto w-full py-4 rounded-xl border-2 border-black font-black uppercase text-[10px] hover:bg-black hover:text-white transition-all">{t.btnAssessment}</button>
+                                    </div>
+
+                                    <div className="p-10 rounded-[2.5rem] bg-black text-white flex flex-col relative shadow-2xl lg:scale-105 z-10 border border-white/5">
+                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-black px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{t.vagas}</div>
+                                        <h3 className="text-3xl font-black uppercase mb-4 italic leading-none">{t.cardMain}</h3>
+                                        <div className="text-5xl font-black mb-10 text-green-400 leading-none tracking-tighter">{t.priceMain}<span className="text-sm font-bold text-slate-400">{t.priceMainSub}</span></div>
+                                        <ul className="space-y-4 mb-10 text-[10px] font-black uppercase">
+                                            {t.featuresMain.map((f, i) => <li key={i} className="flex items-center gap-2"><Icon name="check" size={14} className="text-green-500" /> {f}</li>)}
+                                        </ul>
+                                        <button onClick={() => handleWhatsApp(t.cardMain)} className="w-full bg-green-500 text-black py-5 rounded-2xl font-black text-lg uppercase italic hover:bg-white transition-all">{t.btnMain}</button>
+                                    </div>
+
+                                    <div className="p-10 rounded-[2.5rem] bg-slate-100 border border-black/5 flex flex-col">
+                                        <h3 className="text-2xl font-black uppercase mb-8">{t.cardExtra}</h3>
+                                        <div className="space-y-4 mb-10 font-black uppercase text-[10px]">
+                                            <div className="flex justify-between p-4 bg-white rounded-xl shadow-sm"><span>{t.extra1}</span><span className="text-green-600">{t.extra1Price}</span></div>
+                                            <div className="flex justify-between p-4 bg-white rounded-xl shadow-sm"><span>{t.extra2}</span><span className="text-green-600">{t.extra2Price}</span></div>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 uppercase font-black italic">{t.extraDesc}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                /* Personal 1:1 Content (Exclusivo em PT) */
+                                <div className="text-black">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                                        <div className="bg-slate-50 p-10 rounded-[2.5rem] border border-black/5">
+                                            <h3 className="text-2xl font-black uppercase italic mb-6 leading-none">{t.handmadeTitle}</h3>
+                                            <p className="text-slate-600 font-medium mb-8 text-sm leading-relaxed">{t.handmadeSub}</p>
+                                            <h4 className="text-xs font-black uppercase mb-4 text-slate-400">{t.inclusoT}</h4>
+                                            <ul className="space-y-4">
+                                                {t.inclusoItems.map((it, i) => (
+                                                    <li key={i} className="flex gap-4 items-start">
+                                                        <Icon name="check" size={18} className="text-green-600 shrink-0" />
+                                                        <div>
+                                                            <div className="text-[11px] font-black uppercase">{it}</div>
+                                                            {i === 2 && <div className="text-[9px] text-slate-400 font-black uppercase">{t.inclusoItem3Desc}</div>}
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="space-y-6">
+                                            <div className="bg-black text-white p-10 rounded-[2.5rem] shadow-2xl border border-white/5">
+                                                <h3 className="text-2xl font-black uppercase italic mb-6 text-green-400">{t.avaliaCardT}</h3>
+                                                <div className="space-y-4 font-black uppercase text-[10px]">
+                                                    <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem1}</span><span>{t.avaliaCardP1}</span></div>
+                                                    <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem2}</span><span>{t.avaliaCardP2}</span></div>
+                                                    <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl mt-4 text-green-400 italic">{t.avaliaOffer}</div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-slate-100 p-8 rounded-[2rem] flex gap-4 items-center">
+                                                <Icon name="map-pin" className="text-black" size={32} />
+                                                <div className="text-[10px] font-black uppercase text-slate-500">
+                                                    <span className="block text-black mb-1">{t.location}</span>{t.travelD}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h3 className="text-center text-3xl font-black uppercase italic mb-10">{t.pricesT}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        {t.pricesNames.map((name, i) => (
+                                            <div key={i} className={`p-8 rounded-3xl flex flex-col ${i === 2 ? 'bg-green-50 border-2 border-green-500 shadow-xl' : 'bg-slate-50 border border-black/5'} ${i === 3 ? 'bg-black text-white' : ''}`}>
+                                                <h4 className="text-[10px] font-black uppercase text-slate-400 mb-2">{name}</h4>
+                                                <div className={`text-3xl font-black mb-2 ${i === 3 ? 'text-green-400' : ''}`}>{t.pricesVals[i]}</div>
+                                                {i > 0 && <div className="text-[9px] font-bold text-slate-500 uppercase mb-6">{t.pricesSub[i]}</div>}
+                                                <button onClick={() => handleWhatsApp(name)} className={`mt-auto w-full py-3 rounded-xl font-black uppercase text-[10px] border-2 transition-all ${i === 3 ? 'bg-green-500 border-green-500 text-black' : 'border-black hover:bg-black hover:text-white'}`}>{t.pricesBtn[i]}</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* FAQ */}
+                    <section className="py-24 bg-[#05080f]">
+                        <div className="max-w-3xl mx-auto px-8">
+                            <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic text-center mb-16 tracking-tighter">{t.faqT}</h2>
+                            <div className="bg-white/5 p-6 md:p-10 rounded-[2.5rem] border border-white/5">
+                                {t.faqs.map((f, i) => <FAQItem key={i} question={f.q} answer={f.a} />)}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="py-20 border-t border-white/5 text-center bg-[#05080f]">
+                        <div className="container-custom">
+                            <div className="flex justify-center items-center gap-4 mb-8">
+                                <Icon name="activity" className="text-green-400" />
+                                <div className="text-2xl font-black text-white italic uppercase tracking-tighter">GARIBALDI</div>
+                                <div className="h-6 w-px bg-white/10"></div>
+                                <div className="text-[10px] font-black uppercase text-slate-500">CREF 035143</div>
+                            </div>
+                            <div className="flex justify-center gap-8 mb-10 font-black uppercase text-[10px] text-slate-400">
+                                <button onClick={() => handleWhatsApp()} className="hover:text-green-400 transition-colors">WhatsApp</button>
+                                <span className="opacity-10">•</span>
+                                <a href="mailto:contato@nicolasgaribaldi.com" className="hover:text-green-400 transition-colors">Email</a>
+                            </div>
+                            <p className="text-slate-700 text-[9px] font-black uppercase tracking-[0.4em] italic">{t.footer} • © 2024</p>
+                        </div>
+                    </footer>
+
+                    {/* Mobile CTA */}
+                    <div className="fixed bottom-6 left-0 w-full px-6 z-50 md:hidden">
+                        <button onClick={() => handleWhatsApp()} className="w-full bg-green-500 text-black py-4 rounded-2xl font-black text-base shadow-2xl flex items-center justify-center gap-3 uppercase italic">
+                             <Icon name="message-circle" size={20} /> {t.mobileCTA}
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
