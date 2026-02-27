@@ -118,6 +118,7 @@
 
         const translations = {
             pt: {
+                waGreeting: "Olá Nícolas! Quero saber mais sobre ",
                 navAssessoria: "Assessoria",
                 navPersonal: "Personal 1:1",
                 navBtn: "Abrir Protocolo",
@@ -143,9 +144,7 @@
                 planT2: "EVOLUÇÃO.",
                 cardAssessment: "Avaliação Digital",
                 priceAssessment1: "R$ 120",
-                priceAssessment2: "R$ 150",
-                itemAssessment1: "Movimento",
-                itemAssessment2: "Movimentos + Antropométrica",
+                itemAssessment1: "Análise de Movimento",
                 descAssessment: "Diagnóstico biomecânico essencial para iniciarmos sua estratégia online.",
                 btnAssessment: "Agendar Diagnóstico",
                 cardMain: "Assessoria",
@@ -154,12 +153,10 @@
                 vagas: "Vagas Limitadas",
                 featuresMain: ["Treino A/B Personalizado", "Troca Mensal de Planejamento", "1 Aula Online Mensal (1h)", "Suporte WhatsApp Direto"],
                 btnMain: "Quero Iniciar",
-                cardExtra: "Adicionais",
-                extra1: "Corrida",
-                extra1Price: "+R$ 100",
-                extra2: "Presencial",
-                extra2Price: "+R$ 100",
-                extraDesc: "Para refinamento técnico e presencial em Porto Alegre.",
+                cardExtra: "Adicional",
+                extra1: "Periodização de Performance",
+                extra1Price: "+R$ 150",
+                extraDesc: "Planejamento avançado focado em atletas amadores e alto rendimento.",
                 handmadeTitle: "TREINO 100% FEITO À MÃO 👊",
                 handmadeSub: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
                 inclusoT: "📋 O que está incluso",
@@ -195,6 +192,7 @@
                 mobileCTA: "INICIAR AGORA"
             },
             en: {
+                waGreeting: "Hi Nícolas! I'd like to know more about ",
                 navAssessoria: "Online Coaching",
                 navPersonal: "", 
                 navBtn: "Get Started",
@@ -220,9 +218,7 @@
                 planT2: "PLANS.",
                 cardAssessment: "Digital Assessment",
                 priceAssessment1: "$ 30",
-                priceAssessment2: "$ 40",
-                itemAssessment1: "Movement",
-                itemAssessment2: "Movement + Anthropometry",
+                itemAssessment1: "Biomechanical Movement Screen",
                 descAssessment: "Essential biomechanical diagnosis to start your online strategy with safety.",
                 btnAssessment: "Book Assessment",
                 cardMain: "Online Coaching",
@@ -231,12 +227,10 @@
                 vagas: "Limited Spots",
                 featuresMain: ["Personalized Workout Plan", "Monthly Plan Updates", "1 Monthly Online Class (1h)", "Direct WhatsApp Support"],
                 btnMain: "Get Started",
-                cardExtra: "Add-ons",
-                extra1: "Running Plans",
-                extra1Price: "+$ 20",
-                extra2: "Consultation",
-                extra2Price: "+$ 30",
-                extraDesc: "Technical refinement sessions (Porto Alegre only).",
+                cardExtra: "Add-on",
+                extra1: "Performance Periodization",
+                extra1Price: "+$ 30",
+                extraDesc: "Advanced planning focused on amateur athletes and high performance.",
                 handmadeTitle: "",
                 handmadeSub: "",
                 inclusoT: "",
@@ -306,7 +300,7 @@
             const handleWhatsApp = (p = "") => {
                 const num = "5551998422391";
                 const ctx = isDigital ? t.navAssessoria : t.navPersonal;
-                const msg = encodeURIComponent(`Olá Nícolas! Quero saber mais sobre ${ctx}${p ? ` (${p})` : ""}.`);
+                const msg = encodeURIComponent(`${t.waGreeting}${ctx}${p ? ` - ${p}` : ""}.`);
                 window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
             };
 
@@ -438,13 +432,6 @@
                         <div className="container-custom">
                             <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
                                 <h2 className="text-4xl md:text-8xl font-black uppercase italic leading-none text-center md:text-left">{t.planT1} <br/><span className="text-green-600">{t.planT2}</span></h2>
-                                {/* Título de Planos - Trava no Inglês */}
-                                {lang === 'pt' && (
-                                    <div className="switch-container">
-                                        <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
-                                        <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
-                                    </div>
-                                )}
                             </div>
 
                             {isDigital ? (
@@ -454,7 +441,6 @@
                                         <h3 className="text-2xl font-black uppercase mb-4">{t.cardAssessment}</h3>
                                         <div className="space-y-4 mb-10 border-b border-black/10 pb-6 font-black uppercase text-[10px]">
                                             <div className="flex justify-between items-end"><span>{t.itemAssessment1}</span><span className="text-2xl text-green-600 leading-none">{t.priceAssessment1}</span></div>
-                                            <div className="flex justify-between items-end"><span>{t.itemAssessment2}</span><span className="text-2xl text-green-600 leading-none">{t.priceAssessment2}</span></div>
                                         </div>
                                         <p className="text-[10px] font-black uppercase text-slate-500 mb-6 italic">{t.descAssessment}</p>
                                         <button onClick={() => handleWhatsApp(t.cardAssessment)} className="mt-auto w-full py-4 rounded-xl border-2 border-black font-black uppercase text-[10px] hover:bg-black hover:text-white transition-all">{t.btnAssessment}</button>
@@ -473,8 +459,7 @@
                                     <div className="p-10 rounded-[2.5rem] bg-slate-100 border border-black/5 flex flex-col">
                                         <h3 className="text-2xl font-black uppercase mb-8">{t.cardExtra}</h3>
                                         <div className="space-y-4 mb-10 font-black uppercase text-[10px]">
-                                            <div className="flex justify-between p-4 bg-white rounded-xl shadow-sm"><span>{t.extra1}</span><span className="text-green-600">{t.extra1Price}</span></div>
-                                            <div className="flex justify-between p-4 bg-white rounded-xl shadow-sm"><span>{t.extra2}</span><span className="text-green-600">{t.extra2Price}</span></div>
+                                            <div className="flex justify-between p-4 bg-white rounded-xl shadow-sm"><span>{t.extra1}</span><span className="text-green-600 text-lg">{t.extra1Price}</span></div>
                                         </div>
                                         <p className="text-[10px] text-slate-400 uppercase font-black italic">{t.extraDesc}</p>
                                     </div>
