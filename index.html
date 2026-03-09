@@ -1,619 +1,809 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Nícolas Garibaldi | Engenharia do Movimento</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React e Babel -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+import React, { useState, useEffect } from 'react';
+
+const Icon = ({ name, size = 24, className = "" }) => {
+    const icons = {
+        'activity': <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>,
+        'chevron-right': <polyline points="9 18 15 12 9 6"></polyline>,
+        'arrow-right': <><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></>,
+        'plus': <><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></>,
+        'check': <polyline points="20 6 9 17 4 12"></polyline>,
+        'search': <><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></>,
+        'user-check': <><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></>,
+        'smartphone': <><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></>,
+        'message-circle': <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>,
+        'file-text': <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></>,
+        'car': <><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></>,
+        'map-pin': <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></>,
+        'target': <><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></>,
+        'play-circle': <><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></>
+    };
+    return icons[name] ? (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            {icons[name]}
+        </svg>
+    ) : null;
+};
+
+const translations = {
+    pt: {
+        waGreeting: "Olá Nícolas! Quero saber mais sobre ",
+        navAssessoria: "Assessoria",
+        navPersonal: "Personal 1:1",
+        navBtn: "Abrir Protocolo",
+        heroTagDig: "O Método do Presencial no seu celular",
+        heroTagPers: "Atendimento exclusivo e individual",
+        heroT1: "ESTRATÉGIA",
+        heroT2: "VALIDADA.",
+        heroT1Pers: "TREINO 1:1",
+        heroT2Pers: "FEITO À MÃO.",
+        heroSubDig: "Tenha o acompanhamento de um treinador que atende mais de 100 alunos reais todos os dias. Ciência do movimento aplicada à sua rotina.",
+        heroSubPers: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
+        heroCTA: "QUERO MINHA ASSESSORIA",
+        heroCTAPers: "QUERO MEU PERSONAL",
+        marquee: ["Performance Atlética", "Reabilitação Funcional", "Treinamento Funcional"],
+        badgeTitle: "ALUNOS",
+        badgeSub: "Monitorados Diariamente",
+        aboutT1: "ENGENHARIA DO",
+        aboutT2: "MOVIMENTO.",
+        aboutSub: "Minha trajetória une o rigor técnico da Educação Física com o raciocínio lógico da Tecnologia.",
+        aboutText: "Com 6 anos de experiência prática, gerencio o treinamento de mais de 100 alunos no CT em que atuo. Utilizo meu background tecnológico para monitorar cada detalhe da sua evolução técnica. Cada treino é pensado para você evoluir de verdade.",
+        checks: ["Monitoramento por Dados", "Reabilitação Funcional", "Performance Atlética", "Treinamento Funcional"],
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #09090b; /* zinc-950 - Grafite ultra escuro premium */
-            color: #d4d4d8; /* zinc-300 */
-            overflow-x: hidden;
-        }
+        evalTitle: "AVALIAÇÃO",
+        evalSpan: "BIOMECÂNICA.",
+        evalSub: "O mapa exato do seu corpo e performance.",
+        evalText: "Nós não prescrevemos treinos baseados em achismos. Nosso protocolo inicial rastreia assimetrias, analisa sua postura digitalmente e quantifica seus déficits de força para criar um plano à prova de falhas.",
+        evalChecks: ["Análise Digital de Postura", "Mapeamento de Assimetrias", "Índice de Força de Suporte", "Prescrição Corretiva Exata"],
+        evalInvest: "Investimento Único",
+        evalPrice: "R$ 150",
+        evalBtn: "Agendar Avaliação",
 
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
-            display: flex;
-            width: max-content;
-        }
+        // Textos da Nova Secção App Tecnofit
+        appTitle: "TREINOS NA",
+        appSpan: "PALMA DA MÃO.",
+        appSub: "Toda a tua evolução registrada no app Tecnofit.",
+        appText: "Esquece os PDFs estáticos ou as folhas de cálculo confusas. Terás acesso a uma aplicação premium com vídeos demonstrativos de todos os exercícios, histórico de cargas, cronômetro de descanso e gráficos detalhados da tua evolução.",
+        appChecks: ["Vídeos de Execução", "Histórico de Cargas", "Gráficos de Evolução", "Cronômetro Integrado"],
 
-        .container-custom {
-            width: 100%;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .container-custom {
-                padding-left: 4rem;
-                padding-right: 4rem;
-            }
-        }
+        // Textos da Nova Secção Acervo
+        libTitle: "ACERVO",
+        libSpan: "EXCLUSIVO.",
+        libSub: "Execução perfeita, prescrita sob medida para ti.",
+        libText: "Não importa onde treinas. Vais receber todo o acervo de exercícios filmados por mim. Cada movimento é selecionado de acordo com as tuas reais necessidades, enviados via WhatsApp ou Tecnofit para garantir que treinas com máxima eficiência e segurança.",
+        libChecks: ["Vídeos Gravados por Mim", "Explicação Detalhada", "Correção Biomecânica", "Foco na Tua Necessidade"],
 
-        .switch-container {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px;
-            border-radius: 999px;
-            display: inline-flex;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        // Textos Call to Action (Sessão Estratégica)
+        ctaTitle: "VAMOS CONVERSAR?",
+        ctaSpan: "SESSÃO ESTRATÉGICA.",
+        ctaSub: "30 minutos. Totalmente sem custo. Focados no teu objetivo.",
+        ctaText: "Quero entender o teu caso de perto. Agenda uma chamada rápida comigo para mapearmos as tuas metas, analisarmos as tuas limitações e descobrirmos como a Engenharia do Movimento te pode levar ao próximo nível. Sem compromisso.",
+        ctaBtn: "Agendar Sessão Gratuita",
+
+        testTitle: "O QUE DIZEM",
+        testSpan: "MEUS ALUNOS.",
+        testSub: "Transformações reais de quem vive o método na prática.",
+        testimonials: [
+            { name: "Juliano", role: "Aluno de Assessoria", text: "Tive uma transformação que mudou totalmente meu estilo de vida. Após resultados ruins de exames, comecei a treinar com o Nícolas e hoje sou outra pessoa, com saúde e disposição." },
+            { name: "Gabriela", role: "Aluna de Treinamento", text: "Sempre muito atencioso e receptivo. Ele desenhou meus treinos exatamente de acordo com minha necessidade e rotina, o que me fez ter aderência e ótimos resultados." },
+            { name: "Sandro", role: "Aluno de Personal", text: "Iniciei o acompanhamento com foco em melhoria de desempenho e composição corporal. O nível de conhecimento técnico impressiona, as sessões superaram muito minhas expectativas!" },
+            { name: "Angelo", role: "Aluno de Performance", text: "Altamente qualificado com vasta experiência em treinamento físico e especialista em força. Recomendo de olhos fechados para quem busca o verdadeiro alto rendimento." },
+            { name: "Dieter", role: "Aluno de Treinamento", text: "Excelente! Dedicação total ao aluno, focado na implementação de métodos certeiros para o meu objetivo. Tem muito recurso técnico e variações de treinos." },
+            { name: "Gabriele", role: "Aluna de Assessoria", text: "Encontrar um profissional que reúna conhecimento técnico, estratégia e dedicação faz toda a diferença. O Nícolas tem todas as competências para te entregar o melhor resultado." },
+            { name: "João", role: "Aluno Funcional", text: "Profissional extremamente sério e com muita experiência. Além de ser muito dinâmico, ele tem um interesse real e genuíno na evolução dos seus alunos. Super recomendo!" },
+            { name: "Guilherme", role: "Aluno de Assessoria", text: "Muito inteligente na prescrição, atencioso e paciente. Recomendo demais, o cara sabe muito sobre fisiologia e biomecânica, o treino rende de verdade!" },
+            { name: "Henrique", role: "Aluno Esportivo", text: "Grande profissional, muito qualificado em diversas áreas do esporte e saúde. É muito realista com os seus objetivos e sabe te levar exatamente para o próximo nível." }
+        ],
+        
+        planT1: "PLANOS DE",
+        planT2: "EVOLUÇÃO.",
+        cardAssessment: "Avaliação Digital",
+        priceAssessment1: "R$ 150",
+        itemAssessment1: "Análise de Movimento",
+        descAssessment: "Diagnóstico biomecânico essencial para iniciarmos sua estratégia online.",
+        btnAssessment: "Agendar Diagnóstico",
+        cardMain: "Assessoria",
+        priceMain: "R$ 250",
+        priceMainSub: "/mês",
+        vagas: "Vagas Limitadas",
+        featuresMain: ["Treino A/B Personalizado", "Troca Mensal de Planejamento", "1 Aula Online Mensal (1h)", "Suporte WhatsApp Direto"],
+        btnMain: "Quero Iniciar",
+        cardExtra: "Adicional",
+        extra1: "Periodização de Performance",
+        extra1Price: "+R$ 150",
+        extraDesc: "Planejamento avançado focado em atletas amadores e alto rendimento.",
+        handmadeTitle: "TREINO 100% FEITO À MÃO 👊",
+        handmadeSub: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
+        inclusoT: "📋 O que está incluso",
+        inclusoItems: [
+            "Avaliação completa inicial",
+            "Sessões presenciais individuais",
+            "Treino atualizado no app Tecnofit",
+            "Suporte WhatsApp",
+            "Contrato + termo de responsabilidade"
+        ],
+        inclusoItem3Desc: "Vídeos, Fotos de postura e Gráficos de evolução",
+        avaliaCardT: "🎯 Avaliação Inicial",
+        avaliaItem1: "Movimento",
+        avaliaItem2: "Antropométrica (7 dobras)",
+        avaliaCardP1: "R$ 80",
+        avaliaCardP2: "R$ 60",
+        avaliaOffer: "FECHE QUALQUER PACOTE NO DIA DA AVALIAÇÃO E PAGUE APENAS R$ 100",
+        pricesT: "💰 Valores",
+        pricesNames: ["Sessão Avulsa", "Pacote 4x", "Pacote 8x", "Pacote 12x"],
+        pricesVals: ["R$ 120", "R$ 480", "R$ 880", "R$ 1.200"],
+        pricesSub: ["", "R$ 120 / aula", "R$ 110 / aula", "R$ 100 / aula"],
+        pricesBtn: ["Agendar", "Selecionar", "Selecionar", "Selecionar"],
+        recommended: "Frequência Ideal",
+        location: "📍 Atendo na tua casa ou na academia que tu frequenta.",
+        travelT: "🚗 Deslocamento",
+        travelD: "Gratuito até 5km. Acréscimo de R$ 10 a R$ 50/sessão para distâncias maiores.",
+        faqT: "PERGUNTAS FREQUENTES.",
+        faqs: [
+            { q: "Como funciona o suporte?", a: "O suporte é direto via WhatsApp para tirar dúvidas rápidas sobre os exercícios do app ou ajustes de carga." },
+            { q: "O que é o Tecnofit?", a: "É o app profissional que eu utilizo para registrar todos os teus treinos, com vídeos, métricas e gráficos." }
+        ],
+        footer: "Porto Alegre/RS • Engenharia do Movimento",
+        mobileCTA: "INICIAR AGORA"
+    },
+    en: {
+        waGreeting: "Hi Nícolas! I'd like to know more about ",
+        navAssessoria: "Online Coaching",
+        navPersonal: "", 
+        navBtn: "Get Started",
+        heroTagDig: "The quality of in-person training on your phone",
+        heroTagPers: "",
+        heroT1: "VALIDATED",
+        heroT2: "STRATEGY.",
+        heroT1Pers: "",
+        heroT2Pers: "",
+        heroSubDig: "Managed by a professional coach for 100+ daily students. Movement science applied to your routine.",
+        heroSubPers: "",
+        heroCTA: "START MY COACHING",
+        heroCTAPers: "",
+        marquee: ["Athletic Performance", "Functional Rehab", "Strength & Data"],
+        badgeTitle: "STUDENTS",
+        badgeSub: "Monitored Daily",
+        aboutT1: "MOVEMENT",
+        aboutT2: "ENGINEERING.",
+        aboutSub: "Merging technical physical education with logical data reasoning.",
+        aboutText: "With 6 years of experience, I manage over 100 students daily. I use my tech background to monitor every technical detail, ensuring your growth is based on facts, not guesses.",
+        checks: ["Data-Driven Monitoring", "Functional Rehab", "Performance Training", "Strength Protocols"],
+        
+        evalTitle: "BIOMECHANICAL",
+        evalSpan: "ASSESSMENT.",
+        evalSub: "The exact blueprint of your body and performance.",
+        evalText: "We don't prescribe workouts based on guesswork. Our initial protocol tracks asymmetries, digitally analyzes your posture, and quantifies your strength deficits to build a bulletproof plan.",
+        evalChecks: ["Digital Posture Analysis", "Asymmetry Mapping", "Support Strength Index", "Exact Corrective Prescription"],
+        evalInvest: "One-time Investment",
+        evalPrice: "$ 40",
+        evalBtn: "Book Assessment",
+
+        // Textos da Nova Secção App Tecnofit (EN)
+        appTitle: "TRAINING IN",
+        appSpan: "YOUR POCKET.",
+        appSub: "All your progress tracked in the Tecnofit app.",
+        appText: "Forget static PDFs or confusing spreadsheets. You will get access to a premium app with demonstration videos for all exercises, load history, rest timers, and detailed charts of your progress.",
+        appChecks: ["Execution Videos", "Load History", "Progress Charts", "Integrated Timer"],
+
+        // Textos da Nova Secção Acervo (EN)
+        libTitle: "EXCLUSIVE",
+        libSpan: "LIBRARY.",
+        libSub: "Perfect execution, tailored for you.",
+        libText: "No matter where you train. You will receive the entire library of exercises filmed by me. Each movement is selected according to your actual needs, sent via WhatsApp or Tecnofit to ensure you train with maximum efficiency and safety.",
+        libChecks: ["Videos Recorded by Me", "Detailed Explanations", "Biomechanical Correction", "Focus on Your Needs"],
+
+        // Textos Call to Action (Sessão Estratégica) (EN)
+        ctaTitle: "LET'S TALK?",
+        ctaSpan: "STRATEGY CALL.",
+        ctaSub: "30 minutes. Completely free. Focused on your goals.",
+        ctaText: "I want to understand your case closely. Book a quick call with me so we can map your goals, analyze your limitations, and discover how Movement Engineering can take you to the next level. No strings attached.",
+        ctaBtn: "Book Free Session",
+
+        testTitle: "WHAT THEY",
+        testSpan: "SAY.",
+        testSub: "Real transformations from those who live the method.",
+        testimonials: [
+            { name: "Juliano", role: "Coaching Student", text: "I had a transformation that completely changed my lifestyle. After some bad medical exams, I started training with Nícolas and today I'm a completely different person, full of health." },
+            { name: "Gabriela", role: "Training Student", text: "Always very attentive and welcoming. Designed my workouts exactly according to my needs and routine, which gave me consistency and incredible results." },
+            { name: "Sandro", role: "Personal Student", text: "He has massive technical knowledge. I started with a focus on improving performance and body composition. The sessions exceeded all my expectations!" },
+            { name: "Angelo", role: "Performance Student", text: "Highly qualified professional with vast experience in physical training and strength. I blindly recommend him to anyone seeking true high performance." },
+            { name: "Dieter", role: "Training Student", text: "Excellent! Total dedication to the student, focused on surgical methods for my goal. He has incredible technical resources and workout variations." },
+            { name: "Gabriele", role: "Coaching Student", text: "Finding a professional who combines technical knowledge, strategy, and dedication makes all the difference. Nícolas has all the skills to deliver the best results." },
+            { name: "João", role: "Functional Student", text: "An extremely serious professional with deep experience. Besides being dynamic, he has a genuine interest in his students' success. Highly recommend!" },
+            { name: "Guilherme", role: "Coaching Student", text: "Great professional. Very smart in his programming, attentive, and patient. Highly recommend, the guy knows a lot about biomechanics!" },
+            { name: "Henrique", role: "Sports Student", text: "Great professional, highly qualified in various areas of sports and health. He is realistic with your goals and takes you exactly to the next level." }
+        ],
+        
+        planT1: "EVOLUTION",
+        planT2: "PLANS.",
+        cardAssessment: "Digital Assessment",
+        priceAssessment1: "$ 40",
+        itemAssessment1: "Biomechanical Movement Screen",
+        descAssessment: "Essential biomechanical diagnosis to start your online strategy with safety.",
+        btnAssessment: "Book Assessment",
+        cardMain: "Online Coaching",
+        priceMain: "$ 50",
+        priceMainSub: "/mo",
+        vagas: "Limited Spots",
+        featuresMain: ["Personalized Workout Plan", "Monthly Plan Updates", "1 Monthly Online Class (1h)", "Direct WhatsApp Support"],
+        btnMain: "Get Started",
+        cardExtra: "Add-on",
+        extra1: "Performance Periodization",
+        extra1Price: "+$ 30",
+        extraDesc: "Advanced planning focused on amateur athletes and high performance.",
+        handmadeTitle: "",
+        handmadeSub: "",
+        inclusoT: "",
+        inclusoItems: [],
+        inclusoItem3Desc: "",
+        avaliaCardT: "",
+        avaliaItem1: "",
+        avaliaItem2: "",
+        avaliaCardP1: "",
+        avaliaCardP2: "",
+        avaliaOffer: "",
+        pricesT: "",
+        pricesNames: [],
+        pricesVals: [],
+        pricesSub: [],
+        pricesBtn: [],
+        recommended: "",
+        location: "",
+        travelT: "",
+        travelD: "",
+        faqT: "FREQUENT QUESTIONS.",
+        faqs: [
+            { q: "How does support work?", a: "Direct WhatsApp contact for quick form checks, load adjustments, and routine support." },
+            { q: "What is Tecnofit?", a: "It's the premium app I use to track your workouts, videos, and progress metrics." }
+        ],
+        footer: "Porto Alegre, BR • Movement Engineering",
+        mobileCTA: "START NOW"
+    }
+};
+
+const FAQItem = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="border-b border-white/10 last:border-0 py-6">
+            <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center text-left hover:text-green-400 transition-colors gap-4">
+                <span className="text-base md:text-lg font-bold text-white uppercase tracking-tight">{question}</span>
+                <span className="text-2xl shrink-0">{isOpen ? '-' : '+'}</span>
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pt-4' : 'max-h-0'}`}>
+                <p className="text-zinc-400 text-sm font-medium leading-relaxed">{answer}</p>
+            </div>
+        </div>
+    );
+};
+
+const App = () => {
+    const [lang, setLang] = useState('pt');
+    const [isDigital, setIsDigital] = useState(true);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    const t = translations[lang];
+
+    useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const switchLang = (l) => {
+        setLang(l);
+        if (l === 'en') {
+            setIsDigital(true);
         }
+    };
 
-        .switch-btn {
-            padding: 8px 18px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: all 0.3s ease;
-        }
+    const handleWhatsApp = (p = "") => {
+        const num = "5551998422391";
+        const ctx = isDigital ? t.navAssessoria : t.navPersonal;
+        const msg = encodeURIComponent(`${t.waGreeting}${ctx}${p ? ` - ${p}` : ""}.`);
+        window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
+    };
 
-        .switch-btn.active {
-            background: #4ade80; /* green-400 */
-            color: #09090b; /* zinc-950 */
-        }
-
-        .lang-btn {
-            font-size: 10px;
-            font-weight: 900;
-            opacity: 0.4;
-            transition: opacity 0.3s;
-            cursor: pointer;
-        }
-        .lang-btn.active {
-            opacity: 1;
-            color: #4ade80;
-        }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-
-        const Icon = ({ name, size = 24, className = "" }) => {
-            const icons = {
-                'activity': <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>,
-                'chevron-right': <polyline points="9 18 15 12 9 6"></polyline>,
-                'arrow-right': <><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></>,
-                'plus': <><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></>,
-                'check': <polyline points="20 6 9 17 4 12"></polyline>,
-                'search': <><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></>,
-                'user-check': <><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></>,
-                'smartphone': <><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></>,
-                'message-circle': <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>,
-                'file-text': <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></>,
-                'car': <><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></>,
-                'map-pin': <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></>,
-                'target': <><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></>
-            };
-            return icons[name] ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                    {icons[name]}
-                </svg>
-            ) : null;
-        };
-
-        const translations = {
-            pt: {
-                waGreeting: "Olá Nícolas! Quero saber mais sobre ",
-                navAssessoria: "Assessoria",
-                navPersonal: "Personal 1:1",
-                navBtn: "Abrir Protocolo",
-                heroTagDig: "O Método do Presencial no seu celular",
-                heroTagPers: "Atendimento exclusivo e individual",
-                heroT1: "ESTRATÉGIA",
-                heroT2: "VALIDADA.",
-                heroT1Pers: "TREINO 1:1",
-                heroT2Pers: "FEITO À MÃO.",
-                heroSubDig: "Tenha o acompanhamento de um treinador que atende mais de 100 alunos reais todos os dias. Ciência do movimento aplicada à sua rotina.",
-                heroSubPers: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
-                heroCTA: "QUERO MINHA ASSESSORIA",
-                heroCTAPers: "QUERO MEU PERSONAL",
-                marquee: ["Performance Atlética", "Reabilitação Funcional", "Treinamento Funcional"],
-                badgeTitle: "ALUNOS",
-                badgeSub: "Monitorados Diariamente",
-                aboutT1: "ENGENHARIA DO",
-                aboutT2: "MOVIMENTO.",
-                aboutSub: "Minha trajetória une o rigor técnico da Educação Física com o raciocínio lógico da Tecnologia.",
-                aboutText: "Com 6 anos de experiência prática, gerencio o treinamento de mais de 100 alunos no CT em que atuo. Utilizo meu background tecnológico para monitorar cada detalhe da sua evolução técnica. Cada treino é pensado para você evoluir de verdade.",
-                checks: ["Monitoramento por Dados", "Reabilitação Funcional", "Performance Atlética", "Treinamento Funcional"],
+    return (
+        <div className="min-h-screen selection:bg-green-400 selection:text-zinc-950 scroll-smooth bg-zinc-950 font-sans text-zinc-300">
+            
+            {/* CSS styles that used to be in the HTML head */}
+            <style dangerouslySetInnerHTML={{__html: `
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
                 
-                evalTitle: "AVALIAÇÃO",
-                evalSpan: "BIOMECÂNICA.",
-                evalSub: "O mapa exato do seu corpo e performance.",
-                evalText: "Nós não prescrevemos treinos baseados em achismos. Nosso protocolo inicial rastreia assimetrias, analisa sua postura digitalmente e quantifica seus déficits de força para criar um plano à prova de falhas.",
-                evalChecks: ["Análise Digital de Postura", "Mapeamento de Assimetrias", "Índice de Força de Suporte", "Prescrição Corretiva Exata"],
-                evalInvest: "Investimento Único",
-                evalPrice: "R$ 150",
-                evalBtn: "Agendar Avaliação",
-                
-                planT1: "PLANOS DE",
-                planT2: "EVOLUÇÃO.",
-                cardAssessment: "Avaliação Digital",
-                priceAssessment1: "R$ 150",
-                itemAssessment1: "Análise de Movimento",
-                descAssessment: "Diagnóstico biomecânico essencial para iniciarmos sua estratégia online.",
-                btnAssessment: "Agendar Diagnóstico",
-                cardMain: "Assessoria",
-                priceMain: "R$ 250",
-                priceMainSub: "/mês",
-                vagas: "Vagas Limitadas",
-                featuresMain: ["Treino A/B Personalizado", "Troca Mensal de Planejamento", "1 Aula Online Mensal (1h)", "Suporte WhatsApp Direto"],
-                btnMain: "Quero Iniciar",
-                cardExtra: "Adicional",
-                extra1: "Periodização de Performance",
-                extra1Price: "+R$ 150",
-                extraDesc: "Planejamento avançado focado em atletas amadores e alto rendimento.",
-                handmadeTitle: "TREINO 100% FEITO À MÃO 👊",
-                handmadeSub: "Nada de planilha pronta. Nada genérico. Eu analiso tua rotina, limitações e objetivos para montar exatamente o que tu precisa.",
-                inclusoT: "📋 O que está incluso",
-                inclusoItems: [
-                    "Avaliação completa inicial",
-                    "Sessões presenciais individuais",
-                    "Treino atualizado no app Tecnofit",
-                    "Suporte WhatsApp",
-                    "Contrato + termo de responsabilidade"
-                ],
-                inclusoItem3Desc: "Vídeos, Fotos de postura e Gráficos de evolução",
-                avaliaCardT: "🎯 Avaliação Inicial",
-                avaliaItem1: "Movimento",
-                avaliaItem2: "Antropométrica (7 dobras)",
-                avaliaCardP1: "R$ 80",
-                avaliaCardP2: "R$ 60",
-                avaliaOffer: "FECHE QUALQUER PACOTE NO DIA DA AVALIAÇÃO E PAGUE APENAS R$ 100",
-                pricesT: "💰 Valores",
-                pricesNames: ["Sessão Avulsa", "Pacote 4x", "Pacote 8x", "Pacote 12x"],
-                pricesVals: ["R$ 120", "R$ 480", "R$ 880", "R$ 1.200"],
-                pricesSub: ["", "R$ 120 / aula", "R$ 110 / aula", "R$ 100 / aula"],
-                pricesBtn: ["Agendar", "Selecionar", "Selecionar", "Selecionar"],
-                recommended: "Frequência Ideal",
-                location: "📍 Atendo na tua casa ou na academia que tu frequenta.",
-                travelT: "🚗 Deslocamento",
-                travelD: "Gratuito até 5km. Acréscimo de R$ 10 a R$ 50/sessão para distâncias maiores.",
-                faqT: "PERGUNTAS FREQUENTES.",
-                faqs: [
-                    { q: "Como funciona o suporte?", a: "O suporte é direto via WhatsApp para tirar dúvidas rápidas sobre os exercícios do app ou ajustes de carga." },
-                    { q: "O que é o Tecnofit?", a: "É o app profissional que eu utilizo para registrar todos os teus treinos, com vídeos, métricas e gráficos." }
-                ],
-                footer: "Porto Alegre/RS • Engenharia do Movimento",
-                mobileCTA: "INICIAR AGORA"
-            },
-            en: {
-                waGreeting: "Hi Nícolas! I'd like to know more about ",
-                navAssessoria: "Online Coaching",
-                navPersonal: "", 
-                navBtn: "Get Started",
-                heroTagDig: "The quality of in-person training on your phone",
-                heroTagPers: "",
-                heroT1: "VALIDATED",
-                heroT2: "STRATEGY.",
-                heroT1Pers: "",
-                heroT2Pers: "",
-                heroSubDig: "Managed by a professional coach for 100+ daily students. Movement science applied to your routine.",
-                heroSubPers: "",
-                heroCTA: "START MY COACHING",
-                heroCTAPers: "",
-                marquee: ["Athletic Performance", "Functional Rehab", "Strength & Data"],
-                badgeTitle: "STUDENTS",
-                badgeSub: "Monitored Daily",
-                aboutT1: "MOVEMENT",
-                aboutT2: "ENGINEERING.",
-                aboutSub: "Merging technical physical education with logical data reasoning.",
-                aboutText: "With 6 years of experience, I manage over 100 students daily. I use my tech background to monitor every technical detail, ensuring your growth is based on facts, not guesses.",
-                checks: ["Data-Driven Monitoring", "Functional Rehab", "Performance Training", "Strength Protocols"],
-                
-                evalTitle: "BIOMECHANICAL",
-                evalSpan: "ASSESSMENT.",
-                evalSub: "The exact blueprint of your body and performance.",
-                evalText: "We don't prescribe workouts based on guesswork. Our initial protocol tracks asymmetries, digitally analyzes your posture, and quantifies your strength deficits to build a bulletproof plan.",
-                evalChecks: ["Digital Posture Analysis", "Asymmetry Mapping", "Support Strength Index", "Exact Corrective Prescription"],
-                evalInvest: "One-time Investment",
-                evalPrice: "$ 40",
-                evalBtn: "Book Assessment",
-                
-                planT1: "EVOLUTION",
-                planT2: "PLANS.",
-                cardAssessment: "Digital Assessment",
-                priceAssessment1: "$ 40",
-                itemAssessment1: "Biomechanical Movement Screen",
-                descAssessment: "Essential biomechanical diagnosis to start your online strategy with safety.",
-                btnAssessment: "Book Assessment",
-                cardMain: "Online Coaching",
-                priceMain: "$ 50",
-                priceMainSub: "/mo",
-                vagas: "Limited Spots",
-                featuresMain: ["Personalized Workout Plan", "Monthly Plan Updates", "1 Monthly Online Class (1h)", "Direct WhatsApp Support"],
-                btnMain: "Get Started",
-                cardExtra: "Add-on",
-                extra1: "Performance Periodization",
-                extra1Price: "+$ 30",
-                extraDesc: "Advanced planning focused on amateur athletes and high performance.",
-                handmadeTitle: "",
-                handmadeSub: "",
-                inclusoT: "",
-                inclusoItems: [],
-                inclusoItem3Desc: "",
-                avaliaCardT: "",
-                avaliaItem1: "",
-                avaliaItem2: "",
-                avaliaCardP1: "",
-                avaliaCardP2: "",
-                avaliaOffer: "",
-                pricesT: "",
-                pricesNames: [],
-                pricesVals: [],
-                pricesSub: [],
-                pricesBtn: [],
-                recommended: "",
-                location: "",
-                travelT: "",
-                travelD: "",
-                faqT: "FREQUENT QUESTIONS.",
-                faqs: [
-                    { q: "How does support work?", a: "Direct WhatsApp contact for quick form checks, load adjustments, and routine support." },
-                    { q: "What is Tecnofit?", a: "It's the premium app I use to track your workouts, videos, and progress metrics." }
-                ],
-                footer: "Porto Alegre, BR • Movement Engineering",
-                mobileCTA: "START NOW"
-            }
-        };
+                body {
+                    font-family: 'Inter', sans-serif;
+                    background-color: #09090b; 
+                    color: #d4d4d8; 
+                    overflow-x: hidden;
+                }
 
-        const FAQItem = ({ question, answer }) => {
-            const [isOpen, setIsOpen] = useState(false);
-            return (
-                <div className="border-b border-white/10 last:border-0 py-6">
-                    <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center text-left hover:text-green-400 transition-colors gap-4">
-                        <span className="text-base md:text-lg font-bold text-white uppercase tracking-tight">{question}</span>
-                        <span className="text-2xl shrink-0">{isOpen ? '-' : '+'}</span>
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                    animation: marquee 30s linear infinite;
+                    display: flex;
+                    width: max-content;
+                }
+
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .hide-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+
+                .container-custom {
+                    width: 100%;
+                    max-width: 1200px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    padding-left: 1.5rem;
+                    padding-right: 1.5rem;
+                }
+                @media (min-width: 768px) {
+                    .container-custom {
+                        padding-left: 4rem;
+                        padding-right: 4rem;
+                    }
+                }
+
+                .switch-container {
+                    background: rgba(255, 255, 255, 0.05);
+                    padding: 4px;
+                    border-radius: 999px;
+                    display: inline-flex;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                .switch-btn {
+                    padding: 8px 18px;
+                    border-radius: 999px;
+                    font-size: 10px;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    transition: all 0.3s ease;
+                }
+
+                .switch-btn.active {
+                    background: #4ade80; 
+                    color: #09090b; 
+                }
+
+                .lang-btn {
+                    font-size: 10px;
+                    font-weight: 900;
+                    opacity: 0.4;
+                    transition: opacity 0.3s;
+                    cursor: pointer;
+                }
+                .lang-btn.active {
+                    opacity: 1;
+                    color: #4ade80;
+                }
+            `}} />
+
+            {/* Header */}
+            <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-zinc-950/90 backdrop-blur-xl py-4 border-b border-white/10 shadow-2xl' : 'bg-transparent py-6 md:py-8'}`}>
+                <div className="container-custom flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Icon name="activity" className="text-green-400" />
+                        <div className="flex flex-col">
+                            <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">GARIBALDI</span>
+                            <span className="text-[7px] font-black tracking-[0.3em] text-green-400 uppercase leading-none mt-1">
+                                {isDigital ? t.navAssessoria : t.navPersonal}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="hidden lg:flex items-center gap-6">
+                        {lang === 'pt' && (
+                            <div className="switch-container">
+                                <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
+                                <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
+                            </div>
+                        )}
+                        <div className="flex gap-2 bg-white/5 px-3 py-2 rounded-full border border-white/10">
+                            <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
+                            <span className="opacity-10 text-white">|</span>
+                            <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
+                        </div>
+                    </div>
+
+                    <button onClick={() => handleWhatsApp()} className="bg-green-400 hover:bg-white text-zinc-950 px-6 py-2.5 rounded-full font-black text-xs transition-all uppercase flex items-center gap-2 shadow-lg shadow-green-400/20">
+                        {t.navBtn} <Icon name="chevron-right" size={12} />
                     </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 pt-4' : 'max-h-0'}`}>
-                        <p className="text-zinc-400 text-sm font-medium leading-relaxed">{answer}</p>
+                </div>
+            </nav>
+
+            {/* Hero */}
+            <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-zinc-950">
+                <div className="container-custom grid md:grid-cols-12 items-center gap-12 text-center md:text-left">
+                    <div className="md:col-span-12 lg:col-span-10">
+                        <div className="lg:hidden mb-8 flex flex-col gap-4 items-center">
+                            {lang === 'pt' && (
+                                <div className="switch-container">
+                                    <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
+                                    <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
+                                </div>
+                            )}
+                            <div className="flex gap-4">
+                                <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
+                                <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
+                            </div>
+                        </div>
+
+                        <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
+                            <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
+                                {isDigital ? t.heroTagDig : t.heroTagPers}
+                            </span>
+                        </div>
+
+                        <h1 className="text-4xl sm:text-6xl lg:text-[90px] font-black text-zinc-50 mb-6 leading-[1] tracking-tighter uppercase italic">
+                            {isDigital ? t.heroT1 : t.heroT1Pers}<br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">
+                                {isDigital ? t.heroT2 : t.heroT2Pers}
+                            </span>
+                        </h1>
+
+                        <p className="text-base md:text-xl text-zinc-400 max-w-2xl mb-10 font-bold">
+                            {isDigital ? t.heroSubDig : t.heroSubPers}
+                        </p>
+
+                        <button onClick={() => handleWhatsApp()} className="w-full sm:w-auto bg-white text-zinc-950 px-10 py-5 rounded-2xl font-black text-lg hover:bg-green-400 transition-all shadow-2xl flex items-center justify-center gap-3">
+                            {isDigital ? t.heroCTA : t.heroCTAPers} <Icon name="arrow-right" size={20} />
+                        </button>
                     </div>
                 </div>
-            );
-        };
+            </section>
 
-        const App = () => {
-            const [lang, setLang] = useState('pt');
-            const [isDigital, setIsDigital] = useState(true);
-            const [isScrolled, setIsScrolled] = useState(false);
-
-            const t = translations[lang];
-
-            useEffect(() => {
-                const handleScroll = () => setIsScrolled(window.scrollY > 50);
-                window.addEventListener('scroll', handleScroll);
-                return () => window.removeEventListener('scroll', handleScroll);
-            }, []);
-
-            const switchLang = (l) => {
-                setLang(l);
-                if (l === 'en') {
-                    setIsDigital(true);
-                }
-            };
-
-            const handleWhatsApp = (p = "") => {
-                const num = "5551998422391";
-                const ctx = isDigital ? t.navAssessoria : t.navPersonal;
-                const msg = encodeURIComponent(`${t.waGreeting}${ctx}${p ? ` - ${p}` : ""}.`);
-                window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
-            };
-
-            return (
-                <div className="min-h-screen selection:bg-green-400 selection:text-zinc-950 scroll-smooth bg-zinc-950">
-                    {/* Header */}
-                    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-zinc-950/90 backdrop-blur-xl py-4 border-b border-white/10 shadow-2xl' : 'bg-transparent py-6 md:py-8'}`}>
-                        <div className="container-custom flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <Icon name="activity" className="text-green-400" />
-                                <div className="flex flex-col">
-                                    <span className="text-lg font-black text-white leading-none uppercase tracking-tighter">GARIBALDI</span>
-                                    <span className="text-[7px] font-black tracking-[0.3em] text-green-400 uppercase leading-none mt-1">
-                                        {isDigital ? t.navAssessoria : t.navPersonal}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="hidden lg:flex items-center gap-6">
-                                {lang === 'pt' && (
-                                    <div className="switch-container">
-                                        <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
-                                        <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
-                                    </div>
-                                )}
-                                <div className="flex gap-2 bg-white/5 px-3 py-2 rounded-full border border-white/10">
-                                    <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
-                                    <span className="opacity-10 text-white">|</span>
-                                    <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
-                                </div>
-                            </div>
-
-                            <button onClick={() => handleWhatsApp()} className="bg-green-400 hover:bg-white text-zinc-950 px-6 py-2.5 rounded-full font-black text-xs transition-all uppercase flex items-center gap-2 shadow-lg shadow-green-400/20">
-                                {t.navBtn} <Icon name="chevron-right" size={12} />
-                            </button>
+            {/* Marquee */}
+            <div className="py-8 bg-green-400 overflow-hidden border-y-4 border-zinc-950 rotate-[-1deg] relative z-20">
+                <div className="animate-marquee">
+                    {[1,2,3].map(i => (
+                        <div key={i} className="flex gap-10 items-center px-5">
+                            {t.marquee.map((m, idx) => (
+                                <React.Fragment key={idx}>
+                                    <span className="text-zinc-950 text-2xl md:text-3xl font-black uppercase italic">{m}</span>
+                                    <Icon name="plus" size={24} className="text-zinc-950" />
+                                </React.Fragment>
+                            ))}
                         </div>
-                    </nav>
+                    ))}
+                </div>
+            </div>
 
-                    {/* Hero */}
-                    <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-zinc-950">
-                        <div className="container-custom grid md:grid-cols-12 items-center gap-12 text-center md:text-left">
-                            <div className="md:col-span-12 lg:col-span-10">
-                                <div className="lg:hidden mb-8 flex flex-col gap-4 items-center">
-                                    {lang === 'pt' && (
-                                        <div className="switch-container">
-                                            <button onClick={() => setIsDigital(true)} className={`switch-btn ${isDigital ? 'active' : ''}`}>{t.navAssessoria}</button>
-                                            <button onClick={() => setIsDigital(false)} className={`switch-btn ${!isDigital ? 'active' : ''}`}>{t.navPersonal}</button>
-                                        </div>
-                                    )}
-                                    <div className="flex gap-4">
-                                        <button onClick={() => switchLang('pt')} className={`lang-btn ${lang === 'pt' ? 'active' : ''}`}>PT</button>
-                                        <button onClick={() => switchLang('en')} className={`lang-btn ${lang === 'en' ? 'active' : ''}`}>EN</button>
-                                    </div>
-                                </div>
-
-                                <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
-                                    <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
-                                        {isDigital ? t.heroTagDig : t.heroTagPers}
-                                    </span>
-                                </div>
-
-                                <h1 className="text-4xl sm:text-6xl lg:text-[90px] font-black text-zinc-50 mb-6 leading-[1] tracking-tighter uppercase italic">
-                                    {isDigital ? t.heroT1 : t.heroT1Pers}<br/>
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">
-                                        {isDigital ? t.heroT2 : t.heroT2Pers}
-                                    </span>
-                                </h1>
-
-                                <p className="text-base md:text-xl text-zinc-400 max-w-2xl mb-10 font-bold">
-                                    {isDigital ? t.heroSubDig : t.heroSubPers}
-                                </p>
-
-                                <button onClick={() => handleWhatsApp()} className="w-full sm:w-auto bg-white text-zinc-950 px-10 py-5 rounded-2xl font-black text-lg hover:bg-green-400 transition-all shadow-2xl flex items-center justify-center gap-3">
-                                    {isDigital ? t.heroCTA : t.heroCTAPers} <Icon name="arrow-right" size={20} />
-                                </button>
-                            </div>
+            {/* Sobre */}
+            <section className="py-24 bg-zinc-900">
+                <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
+                    <div className="md:col-span-5 relative">
+                        <div className="aspect-[4/5] bg-zinc-800 rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
+                            <img src="https://i.imgur.com/E2auHBT.jpg" className="w-full h-full object-cover" alt="Nicolas" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent opacity-60"></div>
                         </div>
-                    </section>
-
-                    {/* Marquee */}
-                    <div className="py-8 bg-green-400 overflow-hidden border-y-4 border-zinc-950 rotate-[-1deg] relative z-20">
-                        <div className="animate-marquee">
-                            {[1,2,3].map(i => (
-                                <div key={i} className="flex gap-10 items-center px-5">
-                                    {t.marquee.map((m, idx) => (
-                                        <React.Fragment key={idx}>
-                                            <span className="text-zinc-950 text-2xl md:text-3xl font-black uppercase italic">{m}</span>
-                                            <Icon name="plus" size={24} className="text-zinc-950" />
-                                        </React.Fragment>
-                                    ))}
+                        <div className="absolute -bottom-6 -right-6 bg-green-400 text-zinc-950 p-6 rounded-3xl hidden md:block shadow-2xl">
+                            <div className="text-3xl font-black leading-none italic uppercase">+100 {t.badgeTitle}</div>
+                            <div className="text-[10px] font-bold tracking-widest uppercase">{t.badgeSub}</div>
+                        </div>
+                    </div>
+                    <div className="md:col-span-7">
+                        <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-8 underline decoration-green-400 decoration-4">{t.aboutT1} <br/>{t.aboutT2}</h2>
+                        <p className="text-lg text-zinc-300 font-medium mb-6">{t.aboutSub}</p>
+                        <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.aboutText}</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase text-[10px] font-black tracking-widest">
+                            {t.checks.map((c, i) => (
+                                <div key={i} className="flex items-center gap-2 bg-white/5 p-3 rounded-xl border border-white/5">
+                                    <Icon name="check" size={14} className="text-green-400" /> {c}
                                 </div>
                             ))}
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    {/* Sobre */}
-                    <section className="py-24 bg-zinc-900">
-                        <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
-                            <div className="md:col-span-5 relative">
-                                <div className="aspect-[4/5] bg-zinc-800 rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
-                                    <img src="https://i.imgur.com/E2auHBT.jpg" className="w-full h-full object-cover" alt="Nicolas" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent opacity-60"></div>
-                                </div>
-                                <div className="absolute -bottom-6 -right-6 bg-green-400 text-zinc-950 p-6 rounded-3xl hidden md:block shadow-2xl">
-                                    <div className="text-3xl font-black leading-none italic uppercase">+100 {t.badgeTitle}</div>
-                                    <div className="text-[10px] font-bold tracking-widest uppercase">{t.badgeSub}</div>
-                                </div>
-                            </div>
-                            <div className="md:col-span-7">
-                                <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-8 underline decoration-green-400 decoration-4">{t.aboutT1} <br/>{t.aboutT2}</h2>
-                                <p className="text-lg text-zinc-300 font-medium mb-6">{t.aboutSub}</p>
-                                <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.aboutText}</p>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase text-[10px] font-black tracking-widest">
-                                    {t.checks.map((c, i) => (
-                                        <div key={i} className="flex items-center gap-2 bg-white/5 p-3 rounded-xl border border-white/5">
-                                            <Icon name="check" size={14} className="text-green-400" /> {c}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+            {/* AVALIAÇÃO BIOMECÂNICA (Showcase) */}
+            <section className="py-24 bg-zinc-950 relative border-t border-white/5">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-400/5 rounded-full blur-[120px] -z-10"></div>
+                <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
+                    <div className="md:col-span-6 order-2 md:order-1">
+                        <div className="inline-flex items-center gap-2 bg-green-400/10 border border-green-400/20 px-4 py-2 rounded-full mb-6">
+                            <Icon name="target" size={12} className="text-green-400" />
+                            <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
+                                Data-Driven Protocol
+                            </span>
                         </div>
-                    </section>
+                        <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-6">
+                            {t.evalTitle} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">{t.evalSpan}</span>
+                        </h2>
+                        <p className="text-xl text-white font-bold mb-4">{t.evalSub}</p>
+                        <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.evalText}</p>
+                        
+                        <ul className="space-y-4 uppercase text-[10px] font-black tracking-widest mb-10">
+                            {t.evalChecks.map((c, i) => (
+                                <li key={i} className="flex items-center gap-3">
+                                    <div className="bg-green-400/20 p-1.5 rounded-full"><Icon name="check" size={12} className="text-green-400" /></div>
+                                    <span className="text-zinc-300">{c}</span>
+                                </li>
+                            ))}
+                        </ul>
 
-                    {/* AVALIAÇÃO BIOMECÂNICA (Showcase) */}
-                    <section className="py-24 bg-zinc-950 relative border-t border-white/5">
-                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-400/5 rounded-full blur-[120px] -z-10"></div>
-                        <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
-                            <div className="md:col-span-6 order-2 md:order-1">
-                                <div className="inline-flex items-center gap-2 bg-green-400/10 border border-green-400/20 px-4 py-2 rounded-full mb-6">
-                                    <Icon name="target" size={12} className="text-green-400" />
-                                    <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
-                                        Data-Driven Protocol
-                                    </span>
-                                </div>
-                                <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-6">
-                                    {t.evalTitle} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">{t.evalSpan}</span>
-                                </h2>
-                                <p className="text-xl text-white font-bold mb-4">{t.evalSub}</p>
-                                <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.evalText}</p>
-                                
-                                <ul className="space-y-4 uppercase text-[10px] font-black tracking-widest mb-10">
-                                    {t.evalChecks.map((c, i) => (
-                                        <li key={i} className="flex items-center gap-3">
-                                            <div className="bg-green-400/20 p-1.5 rounded-full"><Icon name="check" size={12} className="text-green-400" /></div>
-                                            <span className="text-zinc-300">{c}</span>
-                                        </li>
-                                    ))}
+                        <div className="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div className="text-center sm:text-left">
+                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1">{t.evalInvest}</span>
+                                <span className="text-3xl font-black text-green-400">{t.evalPrice}</span>
+                            </div>
+                            <button onClick={() => handleWhatsApp(t.evalBtn)} className="w-full sm:w-auto bg-green-400 hover:bg-white text-zinc-950 px-8 py-3 rounded-xl font-black text-[10px] uppercase transition-all shadow-lg shadow-green-400/20">
+                                {t.evalBtn}
+                            </button>
+                        </div>
+                    </div>
+                    <div className="md:col-span-6 order-1 md:order-2 relative">
+                        <div className="rounded-[2rem] border border-white/10 overflow-hidden shadow-[0_0_50px_rgba(74,222,128,0.1)] bg-zinc-900">
+                            <img src="https://i.imgur.com/DsGWWIF.png" alt="Relatório de Performance" className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Planos Principais */}
+            <section id="planos" className="py-24 bg-zinc-50 text-zinc-900 rounded-t-[3rem] md:rounded-t-[5rem] shadow-2xl relative z-30">
+                <div className="container-custom">
+                    <div className="flex flex-col items-center mb-16 gap-8">
+                        <h2 className="text-4xl md:text-8xl font-black uppercase italic leading-none text-center">{t.planT1} <br/><span className="text-green-600">{t.planT2}</span></h2>
+                    </div>
+
+                    {isDigital ? (
+                        <div className="flex flex-col gap-12 max-w-4xl mx-auto w-full">
+                            <div className="p-10 rounded-[2.5rem] bg-zinc-900 text-white flex flex-col relative shadow-2xl z-10 border border-zinc-800">
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-400 text-zinc-950 px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{t.vagas}</div>
+                                <h3 className="text-3xl font-black uppercase mb-4 italic leading-none">{t.cardMain}</h3>
+                                <div className="text-5xl font-black mb-10 text-green-400 leading-none tracking-tighter">{t.priceMain}<span className="text-sm font-bold text-zinc-400">{t.priceMainSub}</span></div>
+                                <ul className="space-y-4 mb-10 text-[10px] font-black uppercase">
+                                    {t.featuresMain.map((f, i) => <li key={i} className="flex items-center gap-2"><Icon name="check" size={14} className="text-green-400" /> {f}</li>)}
                                 </ul>
-
-                                <div className="p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
-                                    <div className="text-center sm:text-left">
-                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1">{t.evalInvest}</span>
-                                        <span className="text-3xl font-black text-green-400">{t.evalPrice}</span>
-                                    </div>
-                                    <button onClick={() => handleWhatsApp(t.evalBtn)} className="w-full sm:w-auto bg-green-400 hover:bg-white text-zinc-950 px-8 py-3 rounded-xl font-black text-[10px] uppercase transition-all shadow-lg shadow-green-400/20">
-                                        {t.evalBtn}
-                                    </button>
-                                </div>
+                                <button onClick={() => handleWhatsApp(t.cardMain)} className="mt-auto w-full bg-green-400 text-zinc-950 py-5 rounded-2xl font-black text-lg uppercase italic hover:bg-white transition-all">{t.btnMain}</button>
                             </div>
-                            <div className="md:col-span-6 order-1 md:order-2 relative">
-                                <div className="rounded-[2rem] border border-white/10 overflow-hidden shadow-[0_0_50px_rgba(74,222,128,0.1)] bg-zinc-900">
-                                    <img src="https://i.imgur.com/DsGWWIF.png" alt="Relatório de Performance" className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500" />
+
+                            {/* Card de Adicional com Imagem Expandida - Maior e Abaixo */}
+                            <div className="rounded-[2.5rem] bg-white border border-zinc-200 shadow-sm flex flex-col hover:border-green-400/50 transition-colors overflow-hidden">
+                                <div className="p-8 md:p-12 pb-6 md:pb-8 text-center md:text-left">
+                                    <h3 className="text-2xl md:text-3xl font-black uppercase mb-8">{t.cardExtra}</h3>
+                                    <div className="space-y-4 mb-6 font-black uppercase text-[10px]">
+                                        <div className="flex flex-col sm:flex-row justify-between items-center p-6 md:p-8 bg-zinc-50 rounded-2xl shadow-sm border border-zinc-100 gap-4">
+                                            <span className="text-sm md:text-base">{t.extra1}</span>
+                                            <span className="text-green-600 text-2xl md:text-3xl">{t.extra1Price}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] md:text-xs text-zinc-500 uppercase font-black italic">{t.extraDesc}</p>
+                                </div>
+                                
+                                {/* Teaser Imagem Periodização Ocupando Toda a Largura Maximizada */}
+                                <div className="mt-auto relative group border-t border-zinc-100 bg-zinc-50">
+                                    <div className="absolute inset-0 bg-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
+                                    <img src="https://i.imgur.com/laTCb7e.png" alt="Teaser Periodização" className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-transform duration-700 group-hover:scale-105" />
                                 </div>
                             </div>
                         </div>
-                    </section>
-
-                    {/* Planos Principais */}
-                    <section id="planos" className="py-24 bg-zinc-50 text-zinc-900 rounded-t-[3rem] md:rounded-t-[5rem] shadow-2xl relative z-30">
-                        <div className="container-custom">
-                            <div className="flex flex-col items-center mb-16 gap-8">
-                                <h2 className="text-4xl md:text-8xl font-black uppercase italic leading-none text-center">{t.planT1} <br/><span className="text-green-600">{t.planT2}</span></h2>
-                            </div>
-
-                            {isDigital ? (
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                                    <div className="p-10 rounded-[2.5rem] bg-zinc-900 text-white flex flex-col relative shadow-2xl z-10 border border-zinc-800">
-                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-400 text-zinc-950 px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{t.vagas}</div>
-                                        <h3 className="text-3xl font-black uppercase mb-4 italic leading-none">{t.cardMain}</h3>
-                                        <div className="text-5xl font-black mb-10 text-green-400 leading-none tracking-tighter">{t.priceMain}<span className="text-sm font-bold text-zinc-400">{t.priceMainSub}</span></div>
-                                        <ul className="space-y-4 mb-10 text-[10px] font-black uppercase">
-                                            {t.featuresMain.map((f, i) => <li key={i} className="flex items-center gap-2"><Icon name="check" size={14} className="text-green-400" /> {f}</li>)}
-                                        </ul>
-                                        <button onClick={() => handleWhatsApp(t.cardMain)} className="mt-auto w-full bg-green-400 text-zinc-950 py-5 rounded-2xl font-black text-lg uppercase italic hover:bg-white transition-all">{t.btnMain}</button>
-                                    </div>
-
-                                    <div className="p-10 rounded-[2.5rem] bg-white border border-zinc-200 shadow-sm flex flex-col hover:border-green-400/50 transition-colors">
-                                        <h3 className="text-2xl font-black uppercase mb-8">{t.cardExtra}</h3>
-                                        <div className="space-y-4 mb-6 font-black uppercase text-[10px]">
-                                            <div className="flex justify-between items-center p-5 bg-zinc-50 rounded-2xl shadow-sm border border-zinc-100">
-                                                <span>{t.extra1}</span>
-                                                <span className="text-green-600 text-lg">{t.extra1Price}</span>
-                                            </div>
-                                        </div>
-                                        <p className="text-[10px] text-zinc-500 uppercase font-black italic mb-6">{t.extraDesc}</p>
-                                        
-                                        {/* Teaser Imagem Periodização */}
-                                        <div className="mt-auto rounded-2xl overflow-hidden border border-zinc-200 shadow-sm relative group">
-                                            <div className="absolute inset-0 bg-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none"></div>
-                                            <img src="https://i.imgur.com/laTCb7e.png" alt="Teaser Periodização" className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105" />
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="text-zinc-900">
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                                        <div className="bg-white p-10 rounded-[2.5rem] border border-zinc-200 shadow-sm">
-                                            <h3 className="text-2xl font-black uppercase italic mb-6 leading-none">{t.handmadeTitle}</h3>
-                                            <p className="text-zinc-600 font-medium mb-8 text-sm leading-relaxed">{t.handmadeSub}</p>
-                                            <h4 className="text-xs font-black uppercase mb-4 text-zinc-400">{t.inclusoT}</h4>
-                                            <ul className="space-y-4">
-                                                {t.inclusoItems.map((it, i) => (
-                                                    <li key={i} className="flex gap-4 items-start">
-                                                        <Icon name="check" size={18} className="text-green-600 shrink-0" />
-                                                        <div>
-                                                            <div className="text-[11px] font-black uppercase">{it}</div>
-                                                            {i === 2 && <div className="text-[9px] text-zinc-500 font-black uppercase">{t.inclusoItem3Desc}</div>}
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div className="space-y-6">
-                                            <div className="bg-zinc-900 text-white p-10 rounded-[2.5rem] shadow-2xl border border-zinc-800">
-                                                <h3 className="text-2xl font-black uppercase italic mb-6 text-green-400">{t.avaliaCardT}</h3>
-                                                <div className="space-y-4 font-black uppercase text-[10px]">
-                                                    <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem1}</span><span>{t.avaliaCardP1}</span></div>
-                                                    <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem2}</span><span>{t.avaliaCardP2}</span></div>
-                                                    <div className="p-4 bg-green-400/10 border border-green-400/30 rounded-xl mt-4 text-green-400 italic">{t.avaliaOffer}</div>
+                    ) : (
+                        <div className="text-zinc-900">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                                <div className="bg-white p-10 rounded-[2.5rem] border border-zinc-200 shadow-sm">
+                                    <h3 className="text-2xl font-black uppercase italic mb-6 leading-none">{t.handmadeTitle}</h3>
+                                    <p className="text-zinc-600 font-medium mb-8 text-sm leading-relaxed">{t.handmadeSub}</p>
+                                    <h4 className="text-xs font-black uppercase mb-4 text-zinc-400">{t.inclusoT}</h4>
+                                    <ul className="space-y-4">
+                                        {t.inclusoItems.map((it, i) => (
+                                            <li key={i} className="flex gap-4 items-start">
+                                                <Icon name="check" size={18} className="text-green-600 shrink-0" />
+                                                <div>
+                                                    <div className="text-[11px] font-black uppercase">{it}</div>
+                                                    {i === 2 && <div className="text-[9px] text-zinc-500 font-black uppercase">{t.inclusoItem3Desc}</div>}
                                                 </div>
-                                            </div>
-                                            <div className="bg-white p-8 rounded-[2rem] flex gap-4 items-center border border-zinc-200 shadow-sm">
-                                                <Icon name="map-pin" className="text-zinc-950" size={32} />
-                                                <div className="text-[10px] font-black uppercase text-zinc-500">
-                                                    <span className="block text-zinc-950 mb-1">{t.location}</span>{t.travelD}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 className="text-center text-3xl font-black uppercase italic mb-10">{t.pricesT}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {t.pricesNames.map((name, i) => (
-                                            <div key={i} className={`p-8 rounded-3xl flex flex-col shadow-sm ${i === 2 ? 'bg-zinc-50 border-2 border-green-500' : 'bg-white border border-zinc-200'} ${i === 3 ? 'bg-zinc-900 text-white border-zinc-800' : ''}`}>
-                                                <h4 className="text-[10px] font-black uppercase text-zinc-400 mb-2">{name}</h4>
-                                                <div className={`text-3xl font-black mb-2 ${i === 3 ? 'text-green-400' : ''}`}>{t.pricesVals[i]}</div>
-                                                {i > 0 && <div className="text-[9px] font-bold text-zinc-500 uppercase mb-6">{t.pricesSub[i]}</div>}
-                                                <button onClick={() => handleWhatsApp(name)} className={`mt-auto w-full py-3 rounded-xl font-black uppercase text-[10px] border-2 transition-all ${i === 3 ? 'bg-green-400 border-green-400 text-zinc-950' : 'border-zinc-900 hover:bg-zinc-900 hover:text-white'}`}>{t.pricesBtn[i]}</button>
-                                            </div>
+                                            </li>
                                         ))}
+                                    </ul>
+                                </div>
+                                <div className="space-y-6">
+                                    <div className="bg-zinc-900 text-white p-10 rounded-[2.5rem] shadow-2xl border border-zinc-800">
+                                        <h3 className="text-2xl font-black uppercase italic mb-6 text-green-400">{t.avaliaCardT}</h3>
+                                        <div className="space-y-4 font-black uppercase text-[10px]">
+                                            <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem1}</span><span>{t.avaliaCardP1}</span></div>
+                                            <div className="flex justify-between border-b border-white/10 pb-2"><span>{t.avaliaItem2}</span><span>{t.avaliaCardP2}</span></div>
+                                            <div className="p-4 bg-green-400/10 border border-green-400/30 rounded-xl mt-4 text-green-400 italic">{t.avaliaOffer}</div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-8 rounded-[2rem] flex gap-4 items-center border border-zinc-200 shadow-sm">
+                                        <Icon name="map-pin" className="text-zinc-950" size={32} />
+                                        <div className="text-[10px] font-black uppercase text-zinc-500">
+                                            <span className="block text-zinc-950 mb-1">{t.location}</span>{t.travelD}
+                                        </div>
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                    </section>
-
-                    {/* FAQ */}
-                    <section className="py-24 bg-zinc-900">
-                        <div className="max-w-3xl mx-auto px-8">
-                            <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic text-center mb-16 tracking-tighter">{t.faqT}</h2>
-                            <div className="bg-white/5 p-6 md:p-10 rounded-[2.5rem] border border-white/5">
-                                {t.faqs.map((f, i) => <FAQItem key={i} question={f.q} answer={f.a} />)}
+                            </div>
+                            <h3 className="text-center text-3xl font-black uppercase italic mb-10">{t.pricesT}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {t.pricesNames.map((name, i) => (
+                                    <div key={i} className={`p-8 rounded-3xl flex flex-col shadow-sm ${i === 2 ? 'bg-zinc-50 border-2 border-green-500' : 'bg-white border border-zinc-200'} ${i === 3 ? 'bg-zinc-900 text-white border-zinc-800' : ''}`}>
+                                        <h4 className="text-[10px] font-black uppercase text-zinc-400 mb-2">{name}</h4>
+                                        <div className={`text-3xl font-black mb-2 ${i === 3 ? 'text-green-400' : ''}`}>{t.pricesVals[i]}</div>
+                                        {i > 0 && <div className="text-[9px] font-bold text-zinc-500 uppercase mb-6">{t.pricesSub[i]}</div>}
+                                        <button onClick={() => handleWhatsApp(name)} className={`mt-auto w-full py-3 rounded-xl font-black uppercase text-[10px] border-2 transition-all ${i === 3 ? 'bg-green-400 border-green-400 text-zinc-950' : 'border-zinc-900 hover:bg-zinc-900 hover:text-white'}`}>{t.pricesBtn[i]}</button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    </section>
+                    )}
+                </div>
+            </section>
 
-                    {/* Footer */}
-                    <footer className="py-20 border-t border-white/5 text-center bg-zinc-950">
-                        <div className="container-custom">
-                            <div className="flex justify-center items-center gap-4 mb-8">
-                                <Icon name="activity" className="text-green-400" />
-                                <div className="text-2xl font-black text-white italic uppercase tracking-tighter">GARIBALDI</div>
-                                <div className="h-6 w-px bg-white/10"></div>
-                                <div className="text-[10px] font-black uppercase text-zinc-500">CREF 035143</div>
-                            </div>
-                            <div className="flex justify-center gap-8 mb-10 font-black uppercase text-[10px] text-zinc-400">
-                                <button onClick={() => handleWhatsApp()} className="hover:text-green-400 transition-colors">WhatsApp</button>
-                                <span className="opacity-10">•</span>
-                                <a href="mailto:contato@nicolasgaribaldi.com" className="hover:text-green-400 transition-colors">Email</a>
-                            </div>
-                            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.4em] italic">{t.footer} • © 2024</p>
+            {/* SECÇÃO: APLICATIVO TECNOFIT */}
+            <section className="py-24 bg-zinc-950 relative overflow-hidden">
+                <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-green-400/5 rounded-full blur-[120px] -translate-y-1/2 -z-10"></div>
+                <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
+                    <div className="md:col-span-6 order-2 md:order-1 relative flex justify-center">
+                        <div className="relative w-full max-w-lg">
+                            <div className="absolute inset-0 bg-green-400/20 blur-3xl rounded-full"></div>
+                            <img src="https://tecnofit-site.s3.sa-east-1.amazonaws.com/media/files/2025/07/15115543/Telas-2.webp" alt="App Tecnofit" className="relative z-10 w-full h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-700" />
                         </div>
-                    </footer>
+                    </div>
+                    <div className="md:col-span-6 order-1 md:order-2">
+                        <div className="inline-flex items-center gap-2 bg-green-400/10 border border-green-400/20 px-4 py-2 rounded-full mb-6">
+                            <Icon name="smartphone" size={12} className="text-green-400" />
+                            <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
+                                App Premium
+                            </span>
+                        </div>
+                        <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-6">
+                            {t.appTitle} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">{t.appSpan}</span>
+                        </h2>
+                        <p className="text-xl text-white font-bold mb-4">{t.appSub}</p>
+                        <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.appText}</p>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase text-[10px] font-black tracking-widest">
+                            {t.appChecks.map((c, i) => (
+                                <div key={i} className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5 hover:border-green-400/30 transition-colors">
+                                    <div className="bg-green-400/20 p-1.5 rounded-full shrink-0"><Icon name="check" size={12} className="text-green-400" /></div>
+                                    <span className="text-zinc-300">{c}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    {/* Mobile CTA */}
-                    <div className="fixed bottom-6 left-0 w-full px-6 z-50 md:hidden">
-                        <button onClick={() => handleWhatsApp()} className="w-full bg-green-400 text-zinc-950 py-4 rounded-2xl font-black text-base shadow-2xl flex items-center justify-center gap-3 uppercase italic">
-                             <Icon name="message-circle" size={20} /> {t.mobileCTA}
+            {/* NOVA SECÇÃO: ACERVO DE VÍDEOS (ZIG-ZAG) */}
+            <section className="py-24 bg-zinc-900 relative border-t border-white/5 overflow-hidden">
+                <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-green-400/5 rounded-full blur-[120px] -translate-y-1/2 -z-10"></div>
+                <div className="container-custom grid md:grid-cols-12 gap-12 items-center">
+                    <div className="md:col-span-6 order-1 md:order-1">
+                        <div className="inline-flex items-center gap-2 bg-green-400/10 border border-green-400/20 px-4 py-2 rounded-full mb-6">
+                            <Icon name="play-circle" size={12} className="text-green-400" />
+                            <span className="text-[10px] font-black tracking-widest uppercase text-green-400 italic">
+                                Suporte Direto
+                            </span>
+                        </div>
+                        <h2 className="text-3xl md:text-6xl font-black text-white leading-none uppercase italic mb-6">
+                            {t.libTitle} <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">{t.libSpan}</span>
+                        </h2>
+                        <p className="text-xl text-white font-bold mb-4">{t.libSub}</p>
+                        <p className="text-sm text-zinc-400 leading-relaxed mb-8">{t.libText}</p>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase text-[10px] font-black tracking-widest">
+                            {t.libChecks.map((c, i) => (
+                                <div key={i} className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5 hover:border-green-400/30 transition-colors">
+                                    <div className="bg-green-400/20 p-1.5 rounded-full shrink-0"><Icon name="check" size={12} className="text-green-400" /></div>
+                                    <span className="text-zinc-300">{c}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="md:col-span-6 order-2 md:order-2 relative flex justify-center">
+                        <div className="relative w-full max-w-sm">
+                            <div className="absolute inset-0 bg-green-400/10 blur-3xl rounded-3xl"></div>
+                            {/* Borda simulando a tela de um celular */}
+                            <div className="relative z-10 rounded-[2.5rem] border-[8px] border-zinc-800 bg-zinc-950 overflow-hidden shadow-2xl transform hover:-translate-y-2 transition-transform duration-700">
+                                <img src="https://i.imgur.com/dW8VP9H.png" alt="Acervo de Vídeos WhatsApp" className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* SEÇÃO DE DEPOIMENTOS (Grid de Quadrados) */}
+            <section className="py-24 bg-zinc-950 border-t border-white/5 overflow-hidden">
+                <div className="container-custom">
+                    <div className="text-center md:text-left mb-16">
+                        <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4">
+                            {t.testTitle} <span className="text-green-400">{t.testSpan}</span>
+                        </h2>
+                        <p className="text-xs md:text-sm text-zinc-400 font-bold uppercase tracking-widest">{t.testSub}</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {t.testimonials.map((item, idx) => (
+                            <div key={idx} className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-[2rem] flex flex-col justify-between hover:bg-white/10 transition-colors">
+                                <div>
+                                    <span className="text-5xl text-green-400 font-serif leading-none block mb-4">"</span>
+                                    <p className="text-zinc-300 text-sm md:text-base font-medium leading-relaxed italic mb-8">
+                                        {item.text}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-4 border-t border-white/10 pt-6 mt-auto">
+                                    <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center font-black text-lg text-white uppercase border-2 border-green-400/30 shrink-0">
+                                        {item.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <h4 className="text-white font-black uppercase text-sm tracking-tight">{item.name}</h4>
+                                        <span className="text-green-400 text-[10px] font-bold uppercase tracking-widest">{item.role}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* CALL TO ACTION - SESSÃO ESTRATÉGICA (OFERTA IRRECUSÁVEL) */}
+            <section className="py-24 bg-zinc-950 relative border-t border-white/5 overflow-hidden z-20">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-400/5 rounded-full blur-[150px] -z-10 pointer-events-none"></div>
+                <div className="container-custom max-w-4xl text-center relative z-10">
+                    <div className="bg-zinc-900/80 backdrop-blur-xl border border-green-400/30 p-10 md:p-16 rounded-[3rem] shadow-[0_0_80px_rgba(74,222,128,0.05)] flex flex-col items-center transform hover:scale-[1.02] transition-transform duration-500">
+                        <div className="bg-green-400/20 p-5 rounded-full mb-8 shadow-[0_0_30px_rgba(74,222,128,0.2)]">
+                            <Icon name="message-circle" size={40} className="text-green-400" />
+                        </div>
+                        <h2 className="text-4xl md:text-6xl font-black text-white leading-none uppercase italic mb-6">
+                            {t.ctaTitle} <br/><span className="text-green-400">{t.ctaSpan}</span>
+                        </h2>
+                        <p className="text-xl md:text-2xl text-white font-bold mb-6">{t.ctaSub}</p>
+                        <p className="text-sm md:text-base text-zinc-400 leading-relaxed mb-10 max-w-2xl font-medium">
+                            {t.ctaText}
+                        </p>
+                        <button onClick={() => handleWhatsApp(t.ctaBtn)} className="w-full sm:w-auto bg-green-400 hover:bg-white text-zinc-950 px-12 py-5 rounded-2xl font-black text-lg md:text-xl uppercase transition-all shadow-[0_0_40px_rgba(74,222,128,0.4)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)] flex items-center justify-center gap-3 italic">
+                            {t.ctaBtn} <Icon name="arrow-right" size={24} />
                         </button>
                     </div>
                 </div>
-            );
-        };
+            </section>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+            {/* FAQ */}
+            <section className="py-24 bg-zinc-900 border-t border-white/5">
+                <div className="max-w-3xl mx-auto px-8">
+                    <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic text-center mb-16 tracking-tighter">{t.faqT}</h2>
+                    <div className="bg-white/5 p-6 md:p-10 rounded-[2.5rem] border border-white/5">
+                        {t.faqs.map((f, i) => <FAQItem key={i} question={f.q} answer={f.a} />)}
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="py-20 border-t border-white/5 text-center bg-zinc-950">
+                <div className="container-custom">
+                    <div className="flex justify-center items-center gap-4 mb-8">
+                        <Icon name="activity" className="text-green-400" />
+                        <div className="text-2xl font-black text-white italic uppercase tracking-tighter">GARIBALDI</div>
+                        <div className="h-6 w-px bg-white/10"></div>
+                        <div className="text-[10px] font-black uppercase text-zinc-500">CREF 035143</div>
+                    </div>
+                    <div className="flex justify-center gap-8 mb-10 font-black uppercase text-[10px] text-zinc-400">
+                        <button onClick={() => handleWhatsApp()} className="hover:text-green-400 transition-colors">WhatsApp</button>
+                        <span className="opacity-10">•</span>
+                        <a href="mailto:contato@nicolasgaribaldi.com" className="hover:text-green-400 transition-colors">Email</a>
+                    </div>
+                    <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.4em] italic">{t.footer} • © 2024</p>
+                </div>
+            </footer>
+
+            {/* Mobile CTA */}
+            <div className="fixed bottom-6 left-0 w-full px-6 z-50 md:hidden">
+                <button onClick={() => handleWhatsApp()} className="w-full bg-green-400 text-zinc-950 py-4 rounded-2xl font-black text-base shadow-2xl flex items-center justify-center gap-3 uppercase italic">
+                     <Icon name="message-circle" size={20} /> {t.mobileCTA}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default App;
